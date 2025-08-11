@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LieuRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LieuRepository::class)]
@@ -24,6 +26,20 @@ class Lieu
 
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
+
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'idLieu')]
+    private Collection $ListSortie;
+
+    #[ORM\ManyToOne(inversedBy: 'ListLieu')]
+    private ?Ville $idVille = null;
+
+    public function __construct()
+    {
+        $this->ListSortie = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +90,48 @@ class Lieu
     public function setLongitude(?float $longitude): static
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getListSortie(): Collection
+    {
+        return $this->ListSortie;
+    }
+
+    public function addListSortie(Sortie $listSortie): static
+    {
+        if (!$this->ListSortie->contains($listSortie)) {
+            $this->ListSortie->add($listSortie);
+            $listSortie->setIdLieu($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListSortie(Sortie $listSortie): static
+    {
+        if ($this->ListSortie->removeElement($listSortie)) {
+            // set the owning side to null (unless already changed)
+            if ($listSortie->getIdLieu() === $this) {
+                $listSortie->setIdLieu(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIdVille(): ?Ville
+    {
+        return $this->idVille;
+    }
+
+    public function setIdVille(?Ville $idVille): static
+    {
+        $this->idVille = $idVille;
 
         return $this;
     }

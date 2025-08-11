@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,10 +49,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(options:['default'=> true])]
     private ?bool $actif = null;
 
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'idOrganisateur')]
+    private Collection $ListOrganisateur;
+
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'ListParticipant')]
+    private Collection $ListSortie;
+
+    #[ORM\ManyToOne(inversedBy: 'ListParticipant')]
+    private ?Site $idSite = null;
+
     public function __construct()
     {
         $this->administrateur = false;
         $this->actif = true;
+        $this->ListOrganisateur = new ArrayCollection();
+        $this->ListSortie = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -179,6 +198,75 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActif(?bool $actif): static
     {
         $this->actif = $actif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getListOrganisateur(): Collection
+    {
+        return $this->ListOrganisateur;
+    }
+
+    public function addListOrganisateur(Sortie $listOrganisateur): static
+    {
+        if (!$this->ListOrganisateur->contains($listOrganisateur)) {
+            $this->ListOrganisateur->add($listOrganisateur);
+            $listOrganisateur->setIdOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListOrganisateur(Sortie $listOrganisateur): static
+    {
+        if ($this->ListOrganisateur->removeElement($listOrganisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($listOrganisateur->getIdOrganisateur() === $this) {
+                $listOrganisateur->setIdOrganisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getListSortie(): Collection
+    {
+        return $this->ListSortie;
+    }
+
+    public function addListSortie(Sortie $listSortie): static
+    {
+        if (!$this->ListSortie->contains($listSortie)) {
+            $this->ListSortie->add($listSortie);
+            $listSortie->addListParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListSortie(Sortie $listSortie): static
+    {
+        if ($this->ListSortie->removeElement($listSortie)) {
+            $listSortie->removeListParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function getIdSite(): ?Site
+    {
+        return $this->idSite;
+    }
+
+    public function setIdSite(?Site $idSite): static
+    {
+        $this->idSite = $idSite;
 
         return $this;
     }
