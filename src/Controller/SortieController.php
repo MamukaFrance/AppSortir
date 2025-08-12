@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,5 +36,13 @@ final class SortieController extends AbstractController
             'sortieForm' => $form->createView(),
         ]);
 
+   }
+   #[Route('/listbysite/{id}',name: 'listbysite',requirements: ['id' => '\d+'],methods: ['GET','POST'])]
+   public function listbysite(int $id, SortieService $sortieService): Response
+   {
+$sorties= $sortieService->listbysite($id);
+       return $this->render('sortie/listbysite.html.twig', [
+           'sorties' => $sorties,
+       ]);
    }
 }
