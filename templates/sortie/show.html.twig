@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | {{ sortie.name }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ sortie.name }}</h1>
+    <p>{{ sortie.description }}</p>
+    <p>{{ sortie.dateDebut|date('d/m/Y') }} {{ sortie.dateDebut|date('H:i') }} - {{ sortie.dateFin|date('d/m/Y') }} {{ sortie.dateFin|date('H:i') }}</p>
+    <p>{{ sortie.lieu }}</p>
+    <p>{{ sortie.maxParticipants }} personnes maximum</p>
+    <p>{{ sortie.nbInscriptions }} personnes inscrites</p>
+    <p>{{ sortie.infoSortie }}</p>
+
+{% endblock %}
+
