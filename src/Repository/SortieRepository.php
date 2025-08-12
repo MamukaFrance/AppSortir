@@ -40,4 +40,22 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findBySite(int $id): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->andWhere('s.idSite = :idSite');
+        $queryBuilder->setParameter('idSite', $id);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.dateHeureDebut', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
 }
