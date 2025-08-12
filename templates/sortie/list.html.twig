@@ -57,7 +57,7 @@
                 <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
                 <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
                 <td>
-                    <a href="#">S'inscrire</a>
+                    <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
                 </td>
             </tr>
         {% else %}

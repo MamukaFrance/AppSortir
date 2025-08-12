@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html.twig' %}
 
 {% block title %}
@@ -5,6 +7,13 @@
 {% endblock %}
 
 {% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     <h1>Liste des sorties</h1>
 
     <table>
@@ -44,7 +53,10 @@
                 <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
                 <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
                 <td>
-                    <a href="#">S'inscrire</a>
+                    <a href="{{ path('sortie_register', {'id': c.id}) }}"
+                       class="btn btn-outline-primary"
+                       id="inscrire-btn-{{ c.id }}"
+                       onclick="document.getElementById('inscrire-btn-{{ c.id }}').className = 'btn btn-success'">S'inscrire</a>
                 </td>
             </tr>
         {% else %}

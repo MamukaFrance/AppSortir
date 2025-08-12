@@ -48,27 +48,35 @@ $sorties= $sortieService->listbysite($id);
        ]);
    }
 
-    #[Route('/sortie/{id}/register', name: 'sortie_register')]
-    public function register(Sortie $sortie, SortieService $sortieService): RedirectResponse
+    #[Route('/{id}/register', name: 'register', methods: ['GET'])]
+    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em): RedirectResponse
     {
         $user = $this->getUser();
         if (!$user) {
-            $this->addFlash('error', 'vous devrez entrer au site');
+            $this->addFlash('error', 'Vous devez vous connecter pour vous inscrire');
             return $this->redirectToRoute('app_login');
         }
 
         try {
-            $success = $sortieService->registerUserToSortie($user, $sortie);
+            $success = $sortieService->registerUserToSortie($sortie, $user);
             if ($success) {
-                $this->addFlash('success', 'Vous avez resussit de inscit');
+                $em->flush();
+                $this->addFlash('success', 'Inscription réussie !');
+
+                return $this->redirectToRoute('sortie_listbysite', [
+                    'id' => $sortie->getIdSite()->getId(),
+                    'registered' => $sortie->getId()
+                ]);
             } else {
-                $this->addFlash('warning', 'vous avez deja inscrit');
+                $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie');
             }
         } catch (\Exception $e) {
-            $this->addFlash('error', 'error' . $e->getMessage());
+            $this->addFlash('error', 'Erreur lors de l\'inscription: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('sortie_list'); // یا صفحه‌ای که لیست sortie ها هست
+        return $this->redirectToRoute('sortie_listbysite', [
+            'id' => $sortie->getIdSite()->getId()
+        ]);
     }
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(
