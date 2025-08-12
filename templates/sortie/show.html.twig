@@ -1,17 +1,37 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | {{ sortie.name }}
+    {{ parent() }} | {{ sortie.nom }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ sortie.name }}</h1>
-    <p>{{ sortie.description }}</p>
-    <p>{{ sortie.dateDebut|date('d/m/Y') }} {{ sortie.dateDebut|date('H:i') }} - {{ sortie.dateFin|date('d/m/Y') }} {{ sortie.dateFin|date('H:i') }}</p>
-    <p>{{ sortie.lieu }}</p>
-    <p>{{ sortie.maxParticipants }} personnes maximum</p>
-    <p>{{ sortie.nbInscriptions }} personnes inscrites</p>
-    <p>{{ sortie.infoSortie }}</p>
+    <h1>{{ sortie.nom }}</h1>
+    <p>{{ sortie.infosSortie }}</p>
+    <p>{{ sortie.dateHeureDebut|date('d/m/Y') }} </p>
+    <p>{{ sortie.idLieu.nom }}</p>
+    <p>{{ sortie.nbInscriptionsMax }} personnes maximum</p>
 
+
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Mail</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for participant in participants %}
+            <td>{{ participant.nom }}</td>
+            <td>{{ participant.prenom }}</td>
+            <td>{{ participant.email }}</td>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
 {% endblock %}
-
