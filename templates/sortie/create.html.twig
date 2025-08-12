@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Créer une sortie
+{% endblock %}
+
+{% block body %}
+    <h1>Créer une sortie</h1>
+
+    {# Afficher le formulaire courseForm #}
+
+    {# Ouvrir le formulaire #}
+    {{ form_start(sortieForm) }}
+
+    {# Afficher tout les champs #}
+    {{ form_widget(sortieForm) }}
+
+    <button type="submit" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Envoyer</button>
+
+    {# Fermer le formulaire #}
+    {{ form_end(sortieForm) }}
+{% endblock %}
+
