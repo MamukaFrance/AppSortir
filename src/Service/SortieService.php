@@ -27,8 +27,12 @@ class SortieService
     }
 
     // Inscrit un utilisateur à une sortie
-    public function registerUserToSortie(Sortie $sortie, User $user)
+    public function registerUserToSortie(Sortie $sortie, User $user): bool
     {
+        if ($sortie->getListParticipant()->contains($user)) {
+            return false;
+        }
+
         // Ajoute l'utilisateur à la liste des participants de la sortie
         $sortie->addListParticipant($user);
 
@@ -37,7 +41,7 @@ class SortieService
 
         // Applique les changements en base
         $this->entityManager->flush();
-    }
 
+        return true;
 
-}
+}}
