@@ -22,7 +22,15 @@
                 <ul class="uk-navbar-nav">
                     {% if app.user %}
                         <div>
-                            Bonjour {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                            Bonjour {{ app.user.userIdentifier }}
+                            <ul class="uk-navbar-nav">
+                                <li>
+                                    <a href="{{ path('user_view') }}">Mon profil</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_logout') }}">Se déconnecter</a>
+                                </li>
+                            </ul>
                         </div>
                     {% else %}
                         <li class="uk-active"><a href="{{ path('app_register') }}">S'enregistrer</a></li>

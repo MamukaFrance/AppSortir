@@ -2,16 +2,49 @@
 
 namespace App\Controller;
 
+use App\Form\UserType;
+use App\Service\UserService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/user', name: 'user_')]
 final class UserController extends AbstractController
 {
-    #[Route('/', name: 'profil', methods: ['GET'])]
-    public function profil(): Response
+
+
+    #[Route('/view', name: 'view', methods: ['GET'])]
+    public function view(Request $request): Response
     {
-        return $this->render('user/profil.html.twig');
+        $form = $this->createForm(UserType::class);
+        $form->handleRequest($request);
+
+        return $this->render('/user/view.html.twig');
+    }
+
+    #[Route('/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        dump($user);
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setNom($user->getNom());
+            $user->setPrenom($user->getPrenom());
+            $user->setEmail($user->getEmail());
+            $user->setTelephone($user->getTelephone());
+            $em->persist($user);
+            $em->flush();
+            $this->addFlash('success', 'Profil modifié avec succès');
+            return $this->redirectToRoute('user_view');
+        }
+
+        return $this->render('/user/edit.html.twig', [
+            'userForm' => $form->createView(),
+        ]);
     }
 }
