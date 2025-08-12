@@ -1,0 +1,36 @@
+<nav class="uk-navbar-container custom-navbar fixed-top uk-margin">
+
+    <div class="uk-container">
+        <div class="uk-navbar">
+
+            <div class="uk-navbar-left">
+                <a href="{{ path('main_home') }}">
+                    <img src="{{ asset('images/logo.png') }}" alt="logo" class="logo">
+                </a>
+                <ul class="uk-navbar-nav">
+                    <li class="uk-active"><a href="{{ path('main_home') }}">Accueil</a></li>
+                    <li class="uk-active"><a href="#">Liste</a></li>
+                    {% if app.user %}
+                        <li class="uk-active"><a href="#"">Créer</a></li>
+                    {% endif %}
+                    <li class="uk-active"><a href="#"">A propos</a></li>
+                </ul>
+            </div>
+
+            <div class="uk-navbar-right">
+
+                <ul class="uk-navbar-nav">
+                    {% if app.user %}
+                        <div>
+                            Bonjour {{ app.user.userIdentifier }}, <a href="#">Se déconnecter</a>
+                        </div>
+                    {% else %}
+                        <li class="uk-active"><a href="#"">S'enregistrer</a></li>
+                        <li class="uk-active"><a href="#"">Se connecter</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>
