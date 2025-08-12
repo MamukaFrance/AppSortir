@@ -7,6 +7,7 @@ use App\Form\SortieType;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,4 +46,27 @@ $sorties= $sortieService->listbysite($id);
            'sorties' => $sorties,
        ]);
    }
+
+    #[Route('/sortie/{id}/register', name: 'sortie_register')]
+    public function register(Sortie $sortie, SortieService $sortieService): RedirectResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'vous devrez entrer au site');
+            return $this->redirectToRoute('app_login');
+        }
+
+        try {
+            $success = $sortieService->registerUserToSortie($user, $sortie);
+            if ($success) {
+                $this->addFlash('success', 'Vous avez resussit de inscit');
+            } else {
+                $this->addFlash('warning', 'vous avez deja inscrit');
+            }
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'error' . $e->getMessage());
+        }
+
+        return $this->redirectToRoute('sortie_list'); // یا صفحه‌ای که لیست sortie ها هست
+    }
 }
