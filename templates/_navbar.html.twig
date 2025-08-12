@@ -11,9 +11,9 @@
                     <li class="uk-active"><a href="{{ path('main_home') }}">Accueil</a></li>
                     <li class="uk-active"><a href="#">Liste</a></li>
                     {% if app.user %}
-                        <li class="uk-active"><a href="#"">Créer</a></li>
+                        <li class="uk-active"><a href="#">Créer</a></li>
                     {% endif %}
-                    <li class="uk-active"><a href="#"">A propos</a></li>
+                    <li class="uk-active"><a href="#">A propos</a></li>
                 </ul>
             </div>
 
@@ -25,8 +25,8 @@
                             Bonjour {{ app.user.userIdentifier }}, <a href="#">Se déconnecter</a>
                         </div>
                     {% else %}
-                        <li class="uk-active"><a href="#"">S'enregistrer</a></li>
-                        <li class="uk-active"><a href="#"">Se connecter</a></li>
+                        <li class="uk-active"><a href="#">S'enregistrer</a></li>
+                        <li class="uk-active"><a href="#">Se connecter</a></li>
                     {% endif %}
                 </ul>
             </div>
