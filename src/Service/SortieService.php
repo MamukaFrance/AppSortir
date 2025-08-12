@@ -16,4 +16,10 @@ public function __construct(
      $sorties = $this->sortieRepository->findBySite( $id);
      return $sorties;
     }
+
+    public function list()
+    {
+        $sorties = $this->sortieRepository->findAll();
+        return $sorties;
+    }
 }

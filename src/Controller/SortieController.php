@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Repository\SiteRepository;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,4 +70,25 @@ $sorties= $sortieService->listbysite($id);
 
         return $this->redirectToRoute('sortie_list'); // یا صفحه‌ای که لیست sortie ها هست
     }
+    #[Route('/list', name: 'list', methods: ['GET'])]
+    public function list(
+        Request $request,
+        SortieService $sortieService,
+        SiteRepository $siteRepo
+    ): Response {
+        $siteId = $request->query->getInt('site', 0);
+        $sites = $siteRepo->findAll();
+
+        if ($siteId > 0) {
+            $sorties = $sortieService->listbysite($siteId);
+        } else {
+            $sorties = $sortieService->list();
+        }
+
+        return $this->render('sortie/list.html.twig', [
+            'sites' => $sites,
+            'sorties' => $sorties,
+        ]);
+    }
+
 }
