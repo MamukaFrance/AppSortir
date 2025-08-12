@@ -27,7 +27,7 @@ final class SortieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $sortie->setIdOrganisateur($this->getUser());
-            $sortie->setIdEtat("crée");
+            $sortie->setIdEtat(null);
             $entityManager->persist($sortie);
             $entityManager->flush();
             $this->addFlash('success', 'Sortie crée');
