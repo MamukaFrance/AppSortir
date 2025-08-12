@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('vendor/uikit/css/uikit.min.css') }}">
+        <link rel="icon" href="{{ asset('images/logo.png') }}">;
+        <link rel="stylesheet" href="{{ asset('vendor/uikit/css/uikit.min.css') }}">
         {% block stylesheets %}
         {% endblock %}
 
@@ -16,20 +18,32 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-
-
     <body>
-        <header>
-            {% include '_navbar.html.twig' %}
-        </header>
+    <header>
+        {% include '_navbar.html.twig' %}
+    </header>
 
-        <main class="contenu uk-container">
-            {% block body %}{% endblock %}
-        </main>
+    <main class="contenu uk-container">
+
+        {#  Pour chaque type de message temporaire (ex: [success, [messages]] #}
+        {% for label, messages in app.flashes %}
+            {#  Pour chaque message j'affiche une alert. ex: [Virement effectué, Connecté] #}
+            {% for message in messages %}
+                <div class="uk-alert-{{ label }}" uk-alert>
+                    <a href class="uk-alert-close" uk-close></a>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {%  block body %}
+        {%  endblock %}
 
         <footer>
             <p class="text-center text-body-secondary">@App-Sortir - {{ 'now' | date('Y') }}</p>
         </footer>
+    </main>
+
+
 
     </body>
 </html>
