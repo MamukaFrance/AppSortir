@@ -1,0 +1,3 @@
+prenom,nom,email,role,mot_de_passe
+Alice,Durand,alice@campus-eni.fr,ROLE_USER,123456
+Bob,Martin,bob@campus-eni.fr,ROLE_ADMIN,123456
