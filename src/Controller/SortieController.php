@@ -19,8 +19,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class SortieController extends AbstractController
 {
 
-   #[Route('/create', name: 'create',methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response{
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
 
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
@@ -40,14 +41,15 @@ final class SortieController extends AbstractController
             'sortieForm' => $form->createView(),
         ]);
 
-   }
+    }
 
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(
-        Request $request,
-        SortieService $sortieService,
+        Request        $request,
+        SortieService  $sortieService,
         SiteRepository $siteRepo
-    ): Response {
+    ): Response
+    {
         $siteId = $request->query->getInt('site', 0);
         $sites = $siteRepo->findAll();
 
@@ -98,8 +100,16 @@ final class SortieController extends AbstractController
     {
         $participants = $sortie->getListParticipant();
         return $this->render('sortie/show.html.twig', [
-            'sortie' => $sortie,'participants' => $participants
+            'sortie' => $sortie, 'participants' => $participants
         ]);
     }
 
+    #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($sortie);
+        $entityManager->flush();
+        $this->addFlash('success', 'Sortie supprimée');
+        return $this->redirectToRoute('sortie_list');
+    }
 }
