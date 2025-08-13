@@ -10,9 +10,12 @@
                 <ul class="uk-navbar-nav">
                     <li class="uk-active"><a href="{{ path('main_home') }}">Accueil</a></li>
                     <li class="uk-active"><a href="{{ path('sortie_list') }}">Liste</a></li>
-                    {#  {% if app.user %}#}
-                        <li class="uk-active"><a href="{{ path('sortie_create') }}">Créer</a></li>
+                    {#  {% if app.user %} #}
+
+                        <li class="uk-active uk-visible@m"><a href="{{ path('sortie_create') }}">Créer</a></li>
+
 {#  {% endif %}#}
+
                     <li class="uk-active"><a href="#">A propos</a></li>
                 </ul>
             </div>
@@ -42,3 +45,5 @@
         </div>
     </div>
 </nav>
+
+

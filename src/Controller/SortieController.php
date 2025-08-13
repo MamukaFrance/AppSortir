@@ -78,6 +78,11 @@ $sorties= $sortieService->listbysite($id);
             'id' => $sortie->getIdSite()->getId()
         ]);
     }
+
+
+
+
+
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(
         Request $request,
