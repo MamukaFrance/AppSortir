@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Sortie;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -64,4 +65,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function deleteUser(User $user)
+    {
+        $em = $this->getEntityManager();
+
+        // Récupérer toutes les sorties organisées par l'utilisateur
+        $sorties = $em->getRepository(Sortie::class)
+            ->findBy(['idOrganisateur' => $user]);
+
+        // Détacher l'organisateur de chaque sortie
+        foreach ($sorties as $sortie) {
+            $sortie->setIdOrganisateur(null);
+        }
+
+        // Supprimer l'utilisateur
+        $em->remove($user);
+
+        $em->flush();
+    }
+
+
+    public function save(User $user){
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
 }
