@@ -98,7 +98,7 @@ $sorties= $sortieService->listbysite($id);
             'sorties' => $sorties,
         ]);
     }
-    #[Route('show/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/show/{id}', name: 'show', methods: ['GET'])]
     public function show(Sortie $sortie): Response
     {
         $participants = $sortie->getListParticipant();

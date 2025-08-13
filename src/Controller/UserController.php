@@ -14,7 +14,18 @@ use Symfony\Component\Routing\Attribute\Route;
 final class UserController extends AbstractController
 {
 
+    #[Route('/view/{id}', name: 'viewById', methods: ['GET'])]
+    public function viewById(int $id, UserService $userService): Response
+    {
+        $user = $userService->getUserById($id);
+        if (!$user) {
+            throw $this->createNotFoundException('L\'utilisateur n\'existe pas');
+        }
 
+        return $this->render('/user/viewById.html.twig', [
+            'user' => $user
+        ]);
+    }
     #[Route('/view', name: 'view', methods: ['GET'])]
     public function view(Request $request): Response
     {

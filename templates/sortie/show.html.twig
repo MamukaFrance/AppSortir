@@ -16,22 +16,22 @@
 
     <table>
         <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Mail</th>
-
-
-            </tr>
+        <tr>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Mail</th>
+            <th>Action</th>
+        </tr>
         </thead>
         <tbody>
-            {% for participant in participants %}
-            <td>{{ participant.nom }}</td>
-            <td>{{ participant.prenom }}</td>
-            <td>{{ participant.email }}</td>
-
-            {% endfor %}
-
+        {% for participant in participants %}
+            <tr>
+                <td>{{ participant.nom }}</td>
+                <td>{{ participant.prenom }}</td>
+                <td>{{ participant.email }}</td>
+                <td><a href="{{ path('user_viewById', {'id': participant.id }) }}">Voir le profil</a></td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
