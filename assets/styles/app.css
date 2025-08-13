@@ -5,15 +5,78 @@ body {
     background-color: skyblue;
 }
 
+/* Navbar */
 .logo {
     width: 64px;
 }
+
+.navbar_photo_profil {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.navbar_droite {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fin Navbar */
 
 main {
     flex: 1;
     padding: 5px;
 }
 
+/* Profil */
+.profil-haut {
+    display: flex;
+    align-items: stretch; /* important pour que les enfants prennent la même hauteur */
+    gap: 20px;
+}
+
+.profil_bloc_photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    max-width: 300px;
+    gap: 10px;
+}
+
+.photo_profil {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.btn_upload {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.btn_upload:hover {
+    background-color: #0056b3;
+}
+
+.profil_haut_droite {
+    flex: 2; /* un peu plus de place que la photo */
+}
+
+
+/* Tableau */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -40,7 +103,9 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #f1f1f1;
 }
+/* Fin Tableau */
 
+/* Liens */
 a {
     color: #007BFF;
     text-decoration: none;
@@ -50,6 +115,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
+/* Fin Liens */
 
 footer {
     background-color: #fff;
