@@ -39,7 +39,6 @@ final class UserController extends AbstractController
     public function edit(Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        dump($user);
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -48,6 +47,25 @@ final class UserController extends AbstractController
             $user->setPrenom($user->getPrenom());
             $user->setEmail($user->getEmail());
             $user->setTelephone($user->getTelephone());
+
+            // Photo de profil
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $extension = $photoFile->guessExtension();
+                $nouveauNom = $user->getId() . '.' . $extension;
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $nouveauNom
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors de l\'upload de la photo.');
+                }
+                $user->setPhoto($nouveauNom);
+
+            }
+
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Profil modifié avec succès');
@@ -58,6 +76,7 @@ final class UserController extends AbstractController
             'userForm' => $form->createView(),
         ]);
     }
+
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(UserService $userService): Response
     {
