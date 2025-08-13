@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Admin
+{% endblock %}
+
+{% block body %}
+    <h1>Liste des utilisateurs</h1>
+
+
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Telephone</th>
+            <th>Administrateur</th>
+            <th>Actif</th>
+            <th>Supprimer</th>
+            <th>Desactiver</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for c in users %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td>{{ c.prenom }}</td>
+
+                <td>{{ c.telephone }}</td>
+                <td>{{ c.administrateur ? 'Oui' : 'Non' }}</td>
+                <td>
+                    {{ c.actif ? 'Oui' : 'Non' }}
+                </td>
+                <td>
+                    <a href="{{ path('user_delete', {'id': c.id}) }}">Supprimer</a>
+                </td>
+                <td>
+                    <a href="{{ path('user_desactive', {'id': c.id}) }}">Desactiver</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

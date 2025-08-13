@@ -7,12 +7,11 @@
 {% block body %}
     <h1>Liste des sorties</h1>
 
-    <form method="GET" action="{{ path('sortie_list') }}">
-        <select name="site" id="site" class="form-control" onchange="this.form.submit()">
-            <option value="0">Tous les sites</option>
+    <form method="get" action="{{ path('sortie_list') }}">
+        <select name="site" onchange="this.form.submit()">
+            <option value="0">-- Tous les sites --</option>
             {% for site in sites %}
-                <option value="{{ site.id }}"
-                        {{ app.request.query.get('site') == site.id ? 'selected' : '' }}>
+                <option value="{{ site.id }}" {% if app.request.get('site') == site.id %}selected{% endif %}>
                     {{ site.nom }}
                 </option>
             {% endfor %}

@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
+use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
 use App\Repository\SiteRepository;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,17 +41,27 @@ final class SortieController extends AbstractController
         ]);
 
    }
-   #[Route('/listbysite/{id}',name: 'listbysite',requirements: ['id' => '\d+'],methods: ['GET','POST'])]
-   public function listbysite(int $id, SortieService $sortieService): Response
-   {
-$sorties= $sortieService->listbysite($id);
-       return $this->render('sortie/listbysite.html.twig', [
-           'sorties' => $sorties,
-       ]);
-   }
+
+    #[Route('/list', name: 'list', methods: ['GET'])]
+    public function list(
+        Request $request,
+        SortieService $sortieService,
+        SiteRepository $siteRepo
+    ): Response {
+        $siteId = $request->query->getInt('site', 0);
+        $sites = $siteRepo->findAll();
+
+        $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
+
+        return $this->render('sortie/list.html.twig', [
+            'sites' => $sites,
+            'sorties' => $sorties,
+        ]);
+    }
+
 
     #[Route('/{id}/register', name: 'register', methods: ['GET'])]
-    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em): RedirectResponse
+    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em, EventDispatcherInterface $dispatcher): RedirectResponse
     {
         $user = $this->getUser();
         if (!$user) {
@@ -58,6 +70,7 @@ $sorties= $sortieService->listbysite($id);
         }
 
         try {
+            $dispatcher->dispatch(new SortieInscriptionEvent($sortie));
             $success = $sortieService->registerUserToSortie($sortie, $user);
             if ($success) {
                 $em->flush();
@@ -78,27 +91,9 @@ $sorties= $sortieService->listbysite($id);
             'id' => $sortie->getIdSite()->getId()
         ]);
     }
-    #[Route('/list', name: 'list', methods: ['GET'])]
-    public function list(
-        Request $request,
-        SortieService $sortieService,
-        SiteRepository $siteRepo
-    ): Response {
-        $siteId = $request->query->getInt('site', 0);
-        $sites = $siteRepo->findAll();
 
-        if ($siteId > 0) {
-            $sorties = $sortieService->listbysite($siteId);
-        } else {
-            $sorties = $sortieService->list();
-        }
 
-        return $this->render('sortie/list.html.twig', [
-            'sites' => $sites,
-            'sorties' => $sorties,
-        ]);
-    }
-    #[Route('/show/{id}', name: 'show', methods: ['GET'])]
+    #[Route('show/{id}', name: 'show', methods: ['GET'])]
     public function show(Sortie $sortie): Response
     {
         $participants = $sortie->getListParticipant();

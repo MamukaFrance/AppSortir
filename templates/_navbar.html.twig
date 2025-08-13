@@ -13,6 +13,9 @@
                     {#  {% if app.user %}#}
                         <li class="uk-active"><a href="{{ path('sortie_create') }}">Créer</a></li>
 {#  {% endif %}#}
+                     {% if app.user.isAdministrateur %}
+                    <li class="uk-active"><a href="{{ path('user_list') }}">Liste des utilisateurs</a></li>
+                     {% endif %}
                     <li class="uk-active"><a href="#">A propos</a></li>
                 </ul>
             </div>

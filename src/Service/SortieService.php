@@ -15,16 +15,12 @@ class SortieService
     ) {}
 
     // Récupère la liste des sorties pour un site donné
-    public function listbysite(int $id)
+    // src/Service/SortieService.php
+    public function list(?int $siteId = null): array
     {
-        return $this->sortieRepository->findBySite($id);
+        return $this->sortieRepository->findRecent($siteId);
     }
 
-    public function list()
-    {
-        $sorties = $this->sortieRepository->findAll();
-        return $sorties;
-    }
 
     // Inscrit un utilisateur à une sortie
     public function registerUserToSortie(Sortie $sortie, User $user): bool
