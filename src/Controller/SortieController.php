@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
 use App\Service\SortieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,6 +44,26 @@ final class SortieController extends AbstractController
         ]);
 
    }
+
+    #[Route('/lieux/by-ville/{id}', name: 'lieux_by_ville', methods: ['GET'])]
+    public function getLieuxByVille(int $id, LieuRepository $lieuRepo): JsonResponse
+    {
+        $lieux = $lieuRepo->findBy(['idVille' => $id]);
+
+        $data = [];
+        foreach ($lieux as $lieu) {
+            $data[] = [
+                'id' => $lieu->getId(),
+                'nom' => $lieu->getNom()
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+
+
+
    #[Route('/listbysite/{id}',name: 'listbysite',requirements: ['id' => '\d+'],methods: ['GET','POST'])]
    public function listbysite(int $id, SortieService $sortieService): Response
    {
