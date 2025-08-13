@@ -19,5 +19,36 @@
 
     {# Fermer le formulaire #}
     {{ form_end(sortieForm) }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let villeSelect = document.querySelector('#sortie_ville');
+            let lieuSelect = document.querySelector('#sortie_idLieu');
+
+            villeSelect.addEventListener('change', function () {
+                let villeId = this.value;
+
+                // Clear current options
+                lieuSelect.innerHTML = '<option>Chargement...</option>';
+
+                if (villeId) {
+                    fetch('/sortie/lieux/by-ville/' + villeId)
+                        .then(response => response.json())
+                        .then(data => {
+                            lieuSelect.innerHTML = '';
+                            data.forEach(lieu => {
+                                let option = document.createElement('option');
+                                option.value = lieu.id;
+                                option.textContent = lieu.nom;
+                                lieuSelect.appendChild(option);
+                            });
+                        });
+                } else {
+                    lieuSelect.innerHTML = '<option>Sélectionnez d\'abord une ville</option>';
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
 

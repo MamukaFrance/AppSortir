@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des villes{% endblock %}
+
+{% block body %}
+<h1>Villes</h1>
+<a href="{{ path('villes_new') }}">Ajouter une ville</a>
+
+<ul>
+    {% for ville in villes %}
+    <li>{{ ville.nom }}</li>
+        <a href="{{ path('lieux_list', {'villeId': ville.id}) }}" class="btn btn-sm btn-info">Voir les lieux</a>
+    {% else %}
+    <li>Aucune ville trouvée</li>
+    {% endfor %}
+</ul>
+{% endblock %}

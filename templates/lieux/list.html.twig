@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Liste des Lieux{% endblock %}
+
+{% block body %}
+<h1>Lieux de {{ ville.nom }}</h1>
+
+<ul>
+    {% for lieu in lieux %}
+        <li>{{ lieu.nom }}</li>
+    {% else %}
+        <li>Aucun lieu pour cette ville</li>
+    {% endfor %}
+</ul>
+
+<h2>Ajouter un nouveau lieu</h2>
+{{ form_start(form) }}
+{{ form_row(form) }}
+<button type="submit" class="btn btn-primary">Ajouter</button>
+{{ form_end(form) }}
+
+<a href="{{ path('villes_list') }}">Retour aux villes</a>
+{% endblock %}

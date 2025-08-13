@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
-use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
+use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
@@ -13,7 +13,7 @@ use App\Service\SortieService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +33,9 @@ final class SortieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $ville = $form->get('ville')->getData();
+
+
             $sortie->setIdOrganisateur($this->getUser());
             $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']));
             $entityManager->persist($sortie);
@@ -45,6 +48,22 @@ final class SortieController extends AbstractController
             'sortieForm' => $form->createView(),
         ]);
 
+    }
+
+    #[Route('/lieux/by-ville/{id}', name: 'lieux_by_ville', methods: ['GET'])]
+    public function getLieuxByVille(int $id, LieuRepository $lieuRepo): JsonResponse
+    {
+        $lieux = $lieuRepo->findBy(['idVille' => $id]);
+
+        $data = [];
+        foreach ($lieux as $lieu) {
+            $data[] = [
+                'id' => $lieu->getId(),
+                'nom' => $lieu->getNom()
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -64,7 +83,6 @@ final class SortieController extends AbstractController
             'sorties' => $sorties,
         ]);
     }
-
 
     #[Route('/{id}/register', name: 'register', methods: ['GET'])]
     public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em, EventDispatcherInterface $dispatcher): RedirectResponse

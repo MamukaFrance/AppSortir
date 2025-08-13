@@ -7,6 +7,7 @@ use App\Entity\Lieu;
 use App\Entity\Site;
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,10 +33,21 @@ class SortieType extends AbstractType
                 'choice_label' => 'id',
             ])
 
+
+            ->add('ville', EntityType::class, [
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'mapped' => false,
+            ])
+
             ->add('idLieu', EntityType::class, [
                 'class' => Lieu::class,
-                'choice_label' => 'id',
-            ]);
+                'choice_label' => 'nom',
+                'placeholder' => 'Choisissez le ville',
+            ])
+        ;
+
+        ;
 
 
     }
