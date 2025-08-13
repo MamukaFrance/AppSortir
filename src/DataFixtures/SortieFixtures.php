@@ -70,6 +70,10 @@ class SortieFixtures extends Fixture
         $etatCloture->setLibelle("Clôturé");
         $manager->persist($etatCloture);
 
+        $etatCloture = new Etat();
+        $etatCloture->setLibelle("Annulée");
+        $manager->persist($etatCloture);
+
         // === 5. Création des Utilisateurs ===
         $user1 = new User();
         $user1->setEmail("jean.dupont@example.com");

@@ -12,11 +12,14 @@
                     <li class="uk-active"><a href="{{ path('sortie_list') }}">Liste</a></li>
                     {#  {% if app.user %}#}
                         <li class="uk-active"><a href="{{ path('sortie_create') }}">Créer</a></li>
-{#  {% endif %}#}
+                    {#  {% endif %}#}
                      {% if app.user.isAdministrateur %}
                     <li class="uk-active"><a href="{{ path('user_list') }}">Liste des utilisateurs</a></li>
                      {% endif %}
                     <li class="uk-active"><a href="#">A propos</a></li>
+                    {% if app.user %}
+                    <li class="uk-active"><a href="{{ path('sortie_mes-sorties') }}">Mes sorties</a></li>
+                    {% endif %}
                 </ul>
             </div>
 

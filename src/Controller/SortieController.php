@@ -6,7 +6,10 @@ use App\Entity\Sortie;
 use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
 use App\Repository\SiteRepository;
+use App\Repository\SortieRepository;
+use App\Repository\UserRepository;
 use App\Service\SortieService;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -112,4 +115,25 @@ final class SortieController extends AbstractController
         $this->addFlash('success', 'Sortie supprimée');
         return $this->redirectToRoute('sortie_list');
     }
+    #[Route('/mes-sorties', name: 'mes-sorties', methods: ['GET'])]
+    public function mesSorties(Request $request, SortieService $sortieService): Response
+    {
+        $userID = $this->getUser()->getId();
+
+        $sorties = $sortieService->mesSorties($userID);
+
+        return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
+    }
+
+    #[Route('/annuler/{id}', name: 'annuler', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function annuler(int $id, Request $request, SortieService $sortieService, UserRepository $userRepository): Response
+    {
+
+        $sortieService->annulee($id);
+        $userID = $this->getUser()->getId();
+        $sorties = $sortieService->mesSorties($userID);
+
+        return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
+    }
+
 }
