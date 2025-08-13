@@ -12,9 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Form\UserImportType;
 use App\Entity\User;
 
-final class UserImportController extends AbstractController
+
+#[Route('/admin', name: 'admin_')]
+final class AdimController extends AbstractController
 {
-    #[Route('/import', name: 'user_import', methods: ['GET', 'POST'])]
+    #[Route('/userImport', name: 'userImport', methods: ['GET', 'POST'])]
     public function import(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
     {
         $form = $this->createForm(UserImportType::class);
