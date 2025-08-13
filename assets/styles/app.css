@@ -121,3 +121,10 @@ footer {
     background-color: #fff;
     height: 2em;
 }
+
+.imopcsv input{
+    background-color: transparent;
+    border: none;
+    margin-top: 10px;
+    padding-left: 0;
+}

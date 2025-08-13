@@ -25,15 +25,20 @@
             <th>Nom</th>
             <th>Infos</th>
             <th>Date et heure de début</th>
-            <th>Durée (h)</th>
+            <th>Durée (min)</th>
             <th>Nb max inscrits</th>
             <th>Date limite inscription</th>
             <th>Site</th>
             <th>Organisateur</th>
             <th>État</th>
             <th>Lieu</th>
+            {% if app.user %}
             <th>Inscription</th>
             <th>Détail</th>
+            {% endif %}
+            {% if app.user%}
+            <th>Anuler</th>
+            {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Supprimer une sortie</th>
             {% endif %}
@@ -59,15 +64,27 @@
                 </td>
                 <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
                 <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
+                {% if app.user %}
                 <td>
-                    <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
-
+                    {% if app.user.id != c.idOrganisateur.id %}
+                     <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                    {% endif %}
                 </td>
-
                 <td>
                     <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>
                 </td>
-                {% if is_granted('ROLE_ADMIN' %}
+                {% endif %}
+                <td>
+                {% if app.user.id == c.idOrganisateur.id
+                    and c.idEtat is not null
+                    and c.idEtat.libelle != 'Annulée'
+                    and c.dateHeureDebut > date()
+                    or is_granted('ROLE_ADMIN')
+                %}
+                        <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
+                {% endif %}
+                </td>
+                {% if is_granted('ROLE_ADMIN') %}
                     <td>
                         <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
                     </td>

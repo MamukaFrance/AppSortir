@@ -155,7 +155,7 @@ final class SortieController extends AbstractController
         $userID = $this->getUser()->getId();
         $sorties = $sortieService->mesSorties($userID);
 
-        return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
+        return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
     }
 
 }

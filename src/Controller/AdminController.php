@@ -14,7 +14,7 @@ use App\Entity\User;
 
 
 #[Route('/admin', name: 'admin_')]
-final class AdimController extends AbstractController
+final class AdminController extends AbstractController
 {
     #[Route('/userImport', name: 'userImport', methods: ['GET', 'POST'])]
     public function import(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
