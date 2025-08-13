@@ -74,9 +74,22 @@ class SortieFixtures extends Fixture
         $etatCloture->setLibelle("Annulée");
         $manager->persist($etatCloture);
 
+        $etatCloture = new Etat();
+        $etatCloture->setLibelle("Créée");
+        $manager->persist($etatCloture);
+
+        $etatCloture = new Etat();
+        $etatCloture->setLibelle("Activité en cours");
+        $manager->persist($etatCloture);
+
+        $etatCloture = new Etat();
+        $etatCloture->setLibelle("Passée");
+        $manager->persist($etatCloture);
+
+
         // === 5. Création des Utilisateurs ===
         $user1 = new User();
-        $user1->setEmail("jean.dupont@example.com");
+        $user1->setEmail("jean.dupont@campus-eni.fr");
         $user1->setNom("Dupont");
         $user1->setPrenom("Jean");
         $user1->setTelephone("0600000001");
@@ -85,7 +98,7 @@ class SortieFixtures extends Fixture
         $manager->persist($user1);
 
         $user2 = new User();
-        $user2->setEmail("marie.durand@example.com");
+        $user2->setEmail("marie.durand@campus-eni.fr");
         $user2->setNom("Durand");
         $user2->setPrenom("Marie");
         $user2->setTelephone("0600000002");
