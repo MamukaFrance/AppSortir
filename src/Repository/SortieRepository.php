@@ -41,21 +41,24 @@ class SortieRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findBySite(int $id): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->andWhere('s.idSite = :idSite');
-        $queryBuilder->setParameter('idSite', $id);
 
-        return $queryBuilder->getQuery()->getResult();
+// src/Repository/SortieRepository.php
+    public function findRecent(?int $siteId = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.dateHeureDebut >= :dateLimite')
+            ->setParameter('dateLimite', new \DateTimeImmutable('-1 month'))
+            ->andWhere('s.dateLimiteInscription >= :now')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('s.dateHeureDebut', 'ASC');
+
+        if ($siteId) {
+            $qb->andWhere('s.idSite = :siteId')
+                ->setParameter('siteId', $siteId);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
-    public function findAll(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->orderBy('s.dateHeureDebut', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
 
 }
