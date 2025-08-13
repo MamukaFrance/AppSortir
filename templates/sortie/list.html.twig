@@ -66,7 +66,7 @@
                 <td>
                     <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>
                 </td>
-                {% if app.user.isAdministrateur %}
+                {% if is_granted('ROLE_ADMIN' %}
                     <td>
                         <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
                     </td>

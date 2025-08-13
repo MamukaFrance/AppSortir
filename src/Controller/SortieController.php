@@ -127,10 +127,13 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: 'annuler', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function annuler(int $id, Request $request, SortieService $sortieService, UserRepository $userRepository): Response
+    public function annuler(int $id, Request $request, SortieService $sortieService, SortieRepository $sortieRepository): Response
     {
-
-        $sortieService->annulee($id);
+        $sortie = $sortieRepository->find($id);
+        dump($sortie);
+        if ($sortie->getDateHeureDebut() > new \DateTime()) {
+            $sortieService->annulee($id);
+        }
         $userID = $this->getUser()->getId();
         $sorties = $sortieService->mesSorties($userID);
 
