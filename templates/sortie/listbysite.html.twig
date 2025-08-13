@@ -1,0 +1,69 @@
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Les sorties
+{% endblock %}
+
+{% block body %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <h1>Liste des sorties</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Infos</th>
+            <th>Date et heure de début</th>
+            <th>Durée (h)</th>
+            <th>Nb max inscrits</th>
+            <th>Date limite inscription</th>
+            <th>Site</th>
+            <th>Organisateur</th>
+            <th>État</th>
+            <th>Lieu</th>
+            <th>Détail</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for c in sorties %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td>{{ c.infosSortie }}</td>
+                <td>
+                    {{ c.dateHeureDebut ? c.dateHeureDebut|date('d/m/Y H:i') : 'Non définie' }}
+                </td>
+                <td>{{ c.duree ?? '-' }}</td>
+                <td>{{ c.nbInscriptionsMax ?? '-' }}</td>
+                <td>
+                    {{ c.dateLimiteInscription ? c.dateLimiteInscription|date('d/m/Y') : '-' }}
+                </td>
+                <td>{{ c.idSite ? c.idSite.nom : 'Aucun site' }}</td>
+                <td>
+                    {# Ajuste ici selon le nom de ta propriété dans User #}
+                    {{ c.idOrganisateur ? c.idOrganisateur.email : 'Aucun organisateur' }}
+                </td>
+                <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
+                <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
+                <td>
+                    <a href="{{ path('sortie_register', {'id': c.id}) }}"
+                       class="btn btn-outline-primary"
+                       id="inscrire-btn-{{ c.id }}"
+                       onclick="document.getElementById('inscrire-btn-{{ c.id }}').className = 'btn btn-success'">S'inscrire</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11" style="text-align:center;">Aucune sortie trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

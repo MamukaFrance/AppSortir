@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} | Editer mon profil
+{% endblock %}
+
+{% block body %}
+    <h1>Editer mon profil</h1>
+
+    <div class="uk-width-1-1@m uk-margin-auto">
+
+        {{ form_start(userForm) }}
+
+        <div class="profil-haut">
+            <div class="profil_bloc_photo">
+                {% if app.user and app.user.photo %}
+                    <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="photo_profil">
+                {% else %}
+                    <img src="{{ asset('images/profil_defaut.png') }}" alt="Photo de profil" class="photo_profil">
+                {% endif %}
+
+                <label for="{{ userForm.photo.vars.id }}" class="btn_upload">Modifier ma photo</label>
+                {{ form_widget(userForm.photo, {
+                    'attr': {
+                        'style': 'display:none',
+                        'accept': 'image/png, image/jpeg, image.webp'
+                    }
+                }) }}
+            </div>
+            <div class="profil_haut_droite">
+
+                <div class="uk-margin">
+                    {{ form_label(userForm.nom) }}
+                    {{ form_widget(userForm.nom, {'attr': {'class': 'uk-input'}}) }}
+                </div>
+
+                <div class="uk-margin">
+                    {{ form_label(userForm.prenom) }}
+                    {{ form_widget(userForm.prenom, {'attr': {'class': 'uk-input'}}) }}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            {{ form_label(userForm.email) }}
+            {{ form_widget(userForm.email, {'attr': {'class': 'uk-input'}}) }}
+        </div>
+
+        <div class="uk-margin">
+            {{ form_label(userForm.telephone) }}
+            {{ form_widget(userForm.telephone, {'attr': {'class': 'uk-input'}}) }}
+        </div>
+
+        <button type="submit" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Enregistrer</button>
+
+        {{ form_end(userForm) }}
+    </div>
+
+
+{% endblock %}
+
