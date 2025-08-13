@@ -26,6 +26,9 @@ final class SortieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $ville = $form->get('ville')->getData();
+
+
             $sortie->setIdOrganisateur($this->getUser());
             $sortie->setIdEtat(null);
             $entityManager->persist($sortie);
