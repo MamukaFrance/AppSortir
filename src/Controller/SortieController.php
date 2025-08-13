@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
@@ -33,11 +34,11 @@ final class SortieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $sortie->setIdOrganisateur($this->getUser());
-            $sortie->setIdEtat(null);
+            $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']));
             $entityManager->persist($sortie);
             $entityManager->flush();
             $this->addFlash('success', 'Sortie crée');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('sortie_list');
         }
 
         return $this->render('sortie/create.html.twig', [
@@ -81,7 +82,7 @@ final class SortieController extends AbstractController
                 $em->flush();
                 $this->addFlash('success', 'Inscription réussie !');
 
-                return $this->redirectToRoute('sortie_listbysite', [
+                return $this->redirectToRoute('sortie_show', [
                     'id' => $sortie->getIdSite()->getId(),
                     'registered' => $sortie->getId()
                 ]);
@@ -92,7 +93,7 @@ final class SortieController extends AbstractController
             $this->addFlash('error', 'Erreur lors de l\'inscription: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('sortie_listbysite', [
+        return $this->redirectToRoute('sortie_list', [
             'id' => $sortie->getIdSite()->getId()
         ]);
     }

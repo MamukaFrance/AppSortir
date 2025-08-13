@@ -34,7 +34,7 @@
             <th>Lieu</th>
             <th>Inscription</th>
             <th>Détail</th>
-            {% if app.user.isAdministrateur %}
+            {% if is_granted('ROLE_ADMIN') %}
                 <th>Supprimer une sortie</th>
             {% endif %}
         </tr>

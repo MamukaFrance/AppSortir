@@ -39,6 +39,7 @@ class UserFixtures extends Fixture
         $user->setPassword($hashedPassword);
         $user->setActif(true);
         $user->setAdministrateur(true);
+        $user->setRoles(["ROLE_ADMIN"]);
         $user->setTelephone("0612345678");
 
         $manager->persist($user);

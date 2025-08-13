@@ -26,6 +26,7 @@ final class UserController extends AbstractController
             'user' => $user
         ]);
     }
+
     #[Route('/view', name: 'view', methods: ['GET'])]
     public function view(Request $request): Response
     {
@@ -85,6 +86,7 @@ final class UserController extends AbstractController
             'users' => $users,
         ]);
     }
+
     #[Route('delete/{id}', name: 'delete', methods: ['GET'])]
     public function delete(int $id, UserService $userService, EntityManagerInterface $em): Response
     {
@@ -92,11 +94,14 @@ final class UserController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('user_list');
     }
+
     #[Route('desactive/{id}', name: 'desactive', methods: ['GET'])]
     public function desactive(int $id, UserService $userService, EntityManagerInterface $em): Response
     {
-        $userService->desactive($id);
-        $em->flush();
-        return $this->redirectToRoute('user_list');
+
+            $userService->desactive($id);
+            $em->flush();
+            return $this->redirectToRoute('user_list');
+
     }
 }
