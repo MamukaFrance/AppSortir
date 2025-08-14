@@ -1,17 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des villes{% endblock %}
+{% block title %}{{ parent() }} | Liste des villes{% endblock %}
 
 {% block body %}
-<h1>Villes</h1>
+<h1>List des Villes</h1>
 <a href="{{ path('villes_new') }}">Ajouter une ville</a>
 
-<ul>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nom</th>
+        <th>Lieux</th>
+
+    </tr>
+    </thead>
+    <tbody>
     {% for ville in villes %}
-    <li>{{ ville.nom }}</li>
-        <a href="{{ path('lieux_list', {'villeId': ville.id}) }}" class="btn btn-sm btn-info">Voir les lieux</a>
-    {% else %}
-    <li>Aucune ville trouvée</li>
+        <tr>
+            <td>{{ ville.nom }}</td>
+            <td><a href="{{ path('lieux_list', {'villeId': ville.id}) }}" class="btn btn-sm btn-info ">Voir les lieux</a></td>
+{% else %}
+<td>Aucune ville trouvée</td>
+<td>-</td>
+
+
+        </tr>
     {% endfor %}
-</ul>
+    </tbody>
+</table>
+
 {% endblock %}

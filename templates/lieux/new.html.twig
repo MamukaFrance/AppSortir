@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Lieu{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un lieu</h1>
+
+    {{ form_start(form) }}
+
+    {{ form_widget(form) }}
+
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+
+    {{ form_end(form) }}
+
+
+    <a href="{{ path('lieux_list', {'villeId': ville.id}) }}">Retour à la liste</a>
+{% endblock %}
+
