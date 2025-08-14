@@ -1,22 +1,33 @@
 {% extends 'base.html.twig' %}
-{% block title %}Liste des Lieux{% endblock %}
+{% block title %}{{ parent() }} | Liste des Lieux{% endblock %}
 
 {% block body %}
-<h1>Lieux de {{ ville.nom }}</h1>
+    <a href="{{ path('lieux_new' , {'villeId': ville.id}) }}">Ajouter un lieu</a>
+    <table>
+        <thead>
+        <tr>
+            <th>Lieux de {{ ville.nom }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for lieu in lieux %}
+            <tr>
+            <td>{{ lieu.nom }}</td>
+        {% else %}
+            <td>Aucun lieu pour cette ville</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{#<h2>Ajouter un nouveau lieu</h2>#}
+{#{{ form_start(form) }}#}
+{#{{ form_row(form) }}#}
+{#<button type="submit" class="btn btn-primary">Ajouter</button>#}
+{#{{ form_end(form) }}#}
 
-<ul>
-    {% for lieu in lieux %}
-        <li>{{ lieu.nom }}</li>
-    {% else %}
-        <li>Aucun lieu pour cette ville</li>
-    {% endfor %}
-</ul>
+{#<a href="{{ path('villes_list') }}">Retour aux villes</a>#}
 
-<h2>Ajouter un nouveau lieu</h2>
-{{ form_start(form) }}
-{{ form_row(form) }}
-<button type="submit" class="btn btn-primary">Ajouter</button>
-{{ form_end(form) }}
 
-<a href="{{ path('villes_list') }}">Retour aux villes</a>
+
+
 {% endblock %}
