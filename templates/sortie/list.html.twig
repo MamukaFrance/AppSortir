@@ -66,9 +66,20 @@
                 <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
                 {% if app.user %}
                 <td>
-                    {% if app.user.id != c.idOrganisateur.id %}
-                     <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                    {% set inscrit = false %}
+
+                    {% for p in c.ListParticipant %}
+                        {% if app.user.id == p.id %}
+                            {% set inscrit = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if inscrit %}
+                        <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
+                    {% else %}
+                        <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
                     {% endif %}
+
                 </td>
                 <td>
                     <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>

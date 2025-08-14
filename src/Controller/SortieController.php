@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
 use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
+use App\Service\MailService;
 use App\Service\SortieService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +27,9 @@ final class SortieController extends AbstractController
 {
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request,
+                           EntityManagerInterface $entityManager,
+                           SortieService $sortieService): Response
     {
 
         $sortie = new Sortie();
@@ -39,7 +44,10 @@ final class SortieController extends AbstractController
             $sortie->setIdOrganisateur($this->getUser());
             $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']));
             $entityManager->persist($sortie);
+            $user =  $this->getUser();
+            $sortieService->registerUserToSortie($sortie, $user);
             $entityManager->flush();
+
             $this->addFlash('success', 'Sortie crée');
             return $this->redirectToRoute('sortie_list');
         }
@@ -85,7 +93,7 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/register', name: 'register', methods: ['GET'])]
-    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em, EventDispatcherInterface $dispatcher): RedirectResponse
+    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em, EventDispatcherInterface $dispatcher, MailService $mailService): RedirectResponse
     {
         $user = $this->getUser();
         if (!$user) {
@@ -94,14 +102,16 @@ final class SortieController extends AbstractController
         }
 
         try {
-            $dispatcher->dispatch(new SortieInscriptionEvent($sortie));
+//            $dispatcher->dispatch(new SortieInscriptionEvent($sortie));
             $success = $sortieService->registerUserToSortie($sortie, $user);
             if ($success) {
                 $em->flush();
                 $this->addFlash('success', 'Inscription réussie !');
+                $mailService->sendEmailInscription();
+                $this->addFlash('success', 'Mail d\'inscriprtion est envoyé');
 
                 return $this->redirectToRoute('sortie_show', [
-                    'id' => $sortie->getIdSite()->getId(),
+                    'id' => $sortie->getId(),
                     'registered' => $sortie->getId()
                 ]);
             } else {
@@ -112,7 +122,24 @@ final class SortieController extends AbstractController
         }
 
         return $this->redirectToRoute('sortie_list', [
-            'id' => $sortie->getIdSite()->getId()
+            'id' => $sortie->getId()
+        ]);
+    }
+
+    #[Route('/{id}/desinscrire', name: 'desinscrire', methods: ['GET'])]
+    public function desinscrire(Sortie $sortie, SortieService $sortieService,MailService $mailService): RedirectResponse
+    {
+        $user = $this->getUser();
+        $success = $sortieService->desinscrireDeSortie($sortie, $user);
+        if($success){
+            $this->addFlash('success', 'Vous êtes désinscrit');
+            $mailService->sendEmailDesInscription();
+            $this->addFlash('success', 'Mail de désinscriprtion est envoyé');
+        }else{
+            $this->addFlash('warning', 'Vous êtes déjà desinscrit !');
+        }
+        return $this->redirectToRoute('sortie_list', [
+            'id' => $sortie->getId()
         ]);
     }
 
