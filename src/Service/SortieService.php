@@ -27,6 +27,7 @@ class SortieService
     // Inscrit un utilisateur à une sortie
     public function registerUserToSortie(Sortie $sortie, User $user): bool
     {
+
         if ($sortie->getListParticipant()->contains($user)) {
             return false;
         }

@@ -103,6 +103,13 @@ final class SortieController extends AbstractController
 
         try {
 //            $dispatcher->dispatch(new SortieInscriptionEvent($sortie));
+            $nb = $sortie->getListParticipant()->count();
+            if ($nb >= $sortie->getNbInscriptionsMax()) {
+                $this->addFlash('warning', 'Pas de place dans cette sortie');
+                return $this->redirectToRoute('sortie_list', [
+                    'id' => $sortie->getId()
+                ]);
+            }
             $success = $sortieService->registerUserToSortie($sortie, $user);
             if ($success) {
                 $em->flush();

@@ -61,6 +61,7 @@ class SortieRepository extends ServiceEntityRepository
     }
 
 
+
     public function mesSorties($userID): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
