@@ -20,7 +20,7 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setNom("userNom");
         $user->setPrenom("UserPrenom");
-        $user->setEmail("userEmail@gmail.com");
+        $user->setEmail("userEmail@campus-eni.fr");
         $hashedPassword = $this->passwordHasher->hashPassword($user, "123456");
         $user->setPassword($hashedPassword);
         $user->setActif(true);
@@ -34,11 +34,12 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setNom("adminNom");
         $user->setPrenom("adminPrenom");
-        $user->setEmail("adminEmail@gmail.com");
+        $user->setEmail("adminEmail@campus-eni.fr");
         $hashedPassword = $this->passwordHasher->hashPassword($user, "123456");
         $user->setPassword($hashedPassword);
         $user->setActif(true);
         $user->setAdministrateur(true);
+        $user->setRoles(["ROLE_ADMIN"]);
         $user->setTelephone("0612345678");
 
         $manager->persist($user);

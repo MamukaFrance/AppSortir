@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
+use App\Repository\SortieRepository;
+use App\Repository\UserRepository;
 use App\Service\SortieService;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,8 +23,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class SortieController extends AbstractController
 {
 
-   #[Route('/create', name: 'create',methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response{
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
 
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
@@ -32,18 +37,18 @@ final class SortieController extends AbstractController
 
 
             $sortie->setIdOrganisateur($this->getUser());
-            $sortie->setIdEtat(null);
+            $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']));
             $entityManager->persist($sortie);
             $entityManager->flush();
             $this->addFlash('success', 'Sortie crée');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('sortie_list');
         }
 
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $form->createView(),
         ]);
 
-   }
+    }
 
     #[Route('/lieux/by-ville/{id}', name: 'lieux_by_ville', methods: ['GET'])]
     public function getLieuxByVille(int $id, LieuRepository $lieuRepo): JsonResponse
@@ -61,20 +66,26 @@ final class SortieController extends AbstractController
         return new JsonResponse($data);
     }
 
+    #[Route('/list', name: 'list', methods: ['GET'])]
+    public function list(
+        Request        $request,
+        SortieService  $sortieService,
+        SiteRepository $siteRepo
+    ): Response
+    {
+        $siteId = $request->query->getInt('site', 0);
+        $sites = $siteRepo->findAll();
 
+        $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
 
-
-   #[Route('/listbysite/{id}',name: 'listbysite',requirements: ['id' => '\d+'],methods: ['GET','POST'])]
-   public function listbysite(int $id, SortieService $sortieService): Response
-   {
-$sorties= $sortieService->listbysite($id);
-       return $this->render('sortie/listbysite.html.twig', [
-           'sorties' => $sorties,
-       ]);
-   }
+        return $this->render('sortie/list.html.twig', [
+            'sites' => $sites,
+            'sorties' => $sorties,
+        ]);
+    }
 
     #[Route('/{id}/register', name: 'register', methods: ['GET'])]
-    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em): RedirectResponse
+    public function register(Sortie $sortie, SortieService $sortieService, EntityManagerInterface $em, EventDispatcherInterface $dispatcher): RedirectResponse
     {
         $user = $this->getUser();
         if (!$user) {
@@ -83,12 +94,13 @@ $sorties= $sortieService->listbysite($id);
         }
 
         try {
+            $dispatcher->dispatch(new SortieInscriptionEvent($sortie));
             $success = $sortieService->registerUserToSortie($sortie, $user);
             if ($success) {
                 $em->flush();
                 $this->addFlash('success', 'Inscription réussie !');
 
-                return $this->redirectToRoute('sortie_listbysite', [
+                return $this->redirectToRoute('sortie_show', [
                     'id' => $sortie->getIdSite()->getId(),
                     'registered' => $sortie->getId()
                 ]);
@@ -99,42 +111,48 @@ $sorties= $sortieService->listbysite($id);
             $this->addFlash('error', 'Erreur lors de l\'inscription: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('sortie_listbysite', [
+        return $this->redirectToRoute('sortie_list', [
             'id' => $sortie->getIdSite()->getId()
         ]);
     }
 
 
-
-
-
-    #[Route('/list', name: 'list', methods: ['GET'])]
-    public function list(
-        Request $request,
-        SortieService $sortieService,
-        SiteRepository $siteRepo
-    ): Response {
-        $siteId = $request->query->getInt('site', 0);
-        $sites = $siteRepo->findAll();
-
-        if ($siteId > 0) {
-            $sorties = $sortieService->listbysite($siteId);
-        } else {
-            $sorties = $sortieService->list();
-        }
-
-        return $this->render('sortie/list.html.twig', [
-            'sites' => $sites,
-            'sorties' => $sorties,
-        ]);
-    }
     #[Route('/show/{id}', name: 'show', methods: ['GET'])]
     public function show(Sortie $sortie): Response
     {
         $participants = $sortie->getListParticipant();
         return $this->render('sortie/show.html.twig', [
-            'sortie' => $sortie,'participants' => $participants
+            'sortie' => $sortie, 'participants' => $participants
         ]);
+    }
+
+    #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
+    public function delete(Sortie $sortie, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($sortie);
+        $entityManager->flush();
+        $this->addFlash('success', 'Sortie supprimée');
+        return $this->redirectToRoute('sortie_list');
+    }
+    #[Route('/mes-sorties', name: 'mes-sorties', methods: ['GET'])]
+    public function mesSorties(Request $request, SortieService $sortieService): Response
+    {
+        $userID = $this->getUser()->getId();
+
+        $sorties = $sortieService->mesSorties($userID);
+
+        return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
+    }
+
+    #[Route('/annuler/{id}', name: 'annuler', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function annuler(int $id, Request $request, SortieService $sortieService, UserRepository $userRepository): Response
+    {
+
+        $sortieService->annulee($id);
+        $userID = $this->getUser()->getId();
+        $sorties = $sortieService->mesSorties($userID);
+
+        return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
     }
 
 }

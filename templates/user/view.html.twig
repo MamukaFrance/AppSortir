@@ -7,15 +7,26 @@
 
 {% block body %}
     <h1>Mon profil</h1>
-    <div class="uk-width-1-2@m uk-margin-auto">
-        <div class="uk-margin">
-            <label for="input_nom">Nom :</label>
-            <input type="text" value="{{ app.user.nom }}" id="input_nom" disabled class="uk-input uk-width-1-1">
-        </div>
+    <div class="uk-width-1-1@m uk-margin-auto">
 
-        <div class="uk-margin">
-            <label for="input_prenom">Prénom :</label>
-            <input type="text" value="{{ app.user.prenom }}" id="input_prenom" disabled class="uk-input uk-width-1-1">
+        <div class="profil-haut">
+            {% if app.user and app.user.photo %}
+                <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="photo_profil">
+            {% else %}
+                <img src="{{ asset('images/profil_defaut.png') }}" alt="Photo de profil" class="photo_profil">
+            {% endif %}
+
+            <div class="profil_haut_droite">
+                <div class="uk-margin">
+                    <label for="input_nom">Nom :</label>
+                    <input type="text" value="{{ app.user.nom }}" id="input_nom" disabled class="uk-input uk-width-1-1">
+                </div>
+
+                <div class="uk-margin">
+                    <label for="input_prenom">Prénom :</label>
+                    <input type="text" value="{{ app.user.prenom }}" id="input_prenom" disabled class="uk-input uk-width-1-1">
+                </div>
+            </div>
         </div>
 
         <div class="uk-margin">

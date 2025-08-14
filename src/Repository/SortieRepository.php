@@ -61,4 +61,21 @@ class SortieRepository extends ServiceEntityRepository
     }
 
 
+    public function mesSorties($userID): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->andWhere('s.idOrganisateur = :idorganisateur');
+        $queryBuilder->setParameter('idorganisateur', $userID);
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function annulee(int $sortieId): void
+    {
+         $this->createQueryBuilder('s')
+            ->setParameter('s.idEtat', 3)
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }

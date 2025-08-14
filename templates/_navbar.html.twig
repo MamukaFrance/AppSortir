@@ -10,40 +10,44 @@
                 <ul class="uk-navbar-nav">
                     <li class="uk-active"><a href="{{ path('main_home') }}">Accueil</a></li>
                     <li class="uk-active"><a href="{{ path('sortie_list') }}">Liste</a></li>
-                    {#  {% if app.user %} #}
+                    {% if app.user %}
                     <li class="uk-active uk-visible@m"><a href="{{ path('sortie_create') }}">Créer</a></li>
 
-{#  {% endif %}#}
+ {% endif %}
 
+
+                     {% if is_granted('ROLE_ADMIN') %}
+                    <li class="uk-active"><a href="{{ path('user_list') }}">Liste des utilisateurs</a></li>
+                     {% endif %}
                     <li class="uk-active"><a href="#">A propos</a></li>
+                    {% if app.user %}
+                    <li class="uk-active"><a href="{{ path('sortie_mes-sorties') }}">Mes sorties</a></li>
+                    {% endif %}
                     <li class="uk-active uk-visible@m"><a href="{{ path('villes_list') }}">Gerer les Villes et Lieux</a></li>
                 </ul>
             </div>
 
-            <div class="uk-navbar-right">
+            <div class="uk-navbar-right uk-flex uk-flex-middle uk-gap-small">
 
-                <ul class="uk-navbar-nav">
-                    {% if app.user %}
-                        <div>
-                            Bonjour {{ app.user.userIdentifier }}
-                            <ul class="uk-navbar-nav">
-                                <li>
-                                    <a href="{{ path('user_view') }}">Mon profil</a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('app_logout') }}">Se déconnecter</a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <li class="uk-active"><a href="{{ path('app_register') }}">S'enregistrer</a></li>
-                        <li class="uk-active"><a href="{{ path('app_login') }}">Se connecter</a></li>
-                    {% endif %}
-                </ul>
+                {% if app.user %}
+                    <div>
+                        <span>Bonjour {{ app.user.prenom }}</span>
+                        {% if app.user.photo %}
+                            <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="navbar_photo_profil uk-border-circle">
+                        {% else %}
+                            <img src="{{ asset('images/profil_defaut.png') }}" alt="Photo de profil" class="navbar_photo_profil uk-border-circle">
+                        {% endif %}
+                    </div>
+                    <div class="navbar_droite">
+                        <a href="{{ path('user_view') }}" class="uk-button uk-button-text">Mon profil</a>
+                        <a href="{{ path('app_logout') }}" class="uk-button uk-button-text">Se déconnecter</a>
+                    </div>
+                {% else %}
+                    <a href="{{ path('app_register') }}" class="uk-button uk-button-text">S'enregistrer</a>
+                    <a href="{{ path('app_login') }}" class="uk-button uk-button-text">Se connecter</a>
+                {% endif %}
             </div>
 
         </div>
     </div>
 </nav>
-
-

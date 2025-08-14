@@ -7,6 +7,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,6 +20,14 @@ class UserType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('telephone')
+            ->add('photo', FileType::class, [
+                'label' => 'Photo de profil',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'accept' => 'image/*',
+                ]
+            ])
         ;
     }
 
