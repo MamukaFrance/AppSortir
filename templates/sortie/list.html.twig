@@ -75,12 +75,18 @@
                 </td>
                 {% endif %}
                 <td>
-                {% if app.user.id == c.idOrganisateur.id
-                    and c.idEtat is not null
-                    and c.idEtat.libelle != 'Annulée'
-                    and c.dateHeureDebut > date()
-                    or is_granted('ROLE_ADMIN')
-                %}
+                    {% if app.user is not null
+                        and (
+                        (app.user.id == c.idOrganisateur.id
+                        and c.idEtat is not null
+                        and c.idEtat.libelle != 'Annulée'
+                        and c.dateHeureDebut > date())
+                        or (is_granted('ROLE_ADMIN')
+                        and c.idEtat is not null
+                        and c.idEtat.libelle != 'Annulée'
+                        and c.dateHeureDebut > date())
+                        )
+                    %}
                         <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
                 {% endif %}
                 </td>

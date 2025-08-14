@@ -145,17 +145,19 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: 'annuler', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function annuler(int $id, Request $request, SortieService $sortieService, SortieRepository $sortieRepository): Response
+    public function annuler(int $id, Request $request,SiteRepository $siteRepo, SortieService $sortieService, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-        dump($sortie);
-        if ($sortie->getDateHeureDebut() > new \DateTime()) {
-            $sortieService->annulee($id);
-        }
-        $userID = $this->getUser()->getId();
-        $sorties = $sortieService->mesSorties($userID);
 
-        return $this->render('sortie/list.html.twig', ['sorties' => $sorties]);
+        if ($sortie->getDateHeureDebut() > new \DateTime()) {
+            $siteId = $request->query->getInt('site', 0);
+            $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
+            $sites = $siteRepo->findAll();
+            $sortieService->annulee($id);
+
+        }
+
+        return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
     }
 
 }
