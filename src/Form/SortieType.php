@@ -30,7 +30,7 @@ class SortieType extends AbstractType
             ])
             ->add('idSite', EntityType::class, [
                 'class' => Site::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
             ])
 
 

@@ -73,13 +73,13 @@
                             {% set inscrit = true %}
                         {% endif %}
                     {% endfor %}
-
-                    {% if inscrit %}
-                        <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
-                    {% else %}
-                        <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                    {%  if c.idEtat == 'Ouvert' %}
+                        {% if inscrit %}
+                            <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
+                        {% else %}
+                            <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                        {% endif %}
                     {% endif %}
-
                 </td>
                 <td>
                     <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>

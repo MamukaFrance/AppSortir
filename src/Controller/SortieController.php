@@ -42,7 +42,7 @@ final class SortieController extends AbstractController
 
 
             $sortie->setIdOrganisateur($this->getUser());
-            $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']));
+            $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Créée']));
             $entityManager->persist($sortie);
             $user =  $this->getUser();
             $sortieService->registerUserToSortie($sortie, $user);
