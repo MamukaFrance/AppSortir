@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block body %}
+    <h1>Réinitialisez votre mot de passe</h1>
+
+    {{ form_start(resetForm) }}
+        {{ form_row(resetForm.plainPassword) }}
+        <button class="btn btn-primary">Réinitialiser mot de passe</button>
+
+            <div id="password-feedback" style="margin-top: 5px; font-weight: bold;"></div>
+
+            <script>
+                const passwordInput = document.getElementById('change_password_form_plainPassword_first');
+                const feedback = document.getElementById('password-feedback');
+
+                passwordInput.addEventListener('input', () => {
+                    const pwd = passwordInput.value;
+                    const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+                    if (regex.test(pwd)) {
+                        feedback.textContent = 'Mot de passe valide 👍';
+                        feedback.style.color = 'green';
+                    } else {
+                        feedback.textContent = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.';
+                        feedback.style.color = 'red';
+                    }
+                });
+            </script>
+    {{ form_end(resetForm) }}
+{% endblock %}
