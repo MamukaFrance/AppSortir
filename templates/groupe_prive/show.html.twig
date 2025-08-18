@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Groupe prive{% endblock %}
+
+{% block body %}
+    <h1>GroupePrive</h1>
+
+    <table class="table">
+        <tbody>
+{#            <tr>#}
+{#                <th>Id</th>#}
+{#                <td>{{ groupe_prive.id }}</td>#}
+{#            </tr>#}
+            <tr>
+                <th>Nom</th>
+                <td>{{ groupe_prive.nom }}</td>
+            </tr>
+            <tr>
+                <th>DateCreation</th>
+                <td>{{ groupe_prive.dateCreation ? groupe_prive.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Participants</th>
+                <td>
+                    <ul>
+                {% for p in  groupe_prive.participants%}
+                <li>{{ p.nom}}</li>
+                {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="uk-button uk-button-primary uk-border-rounded uk-margin" href="{{ path('app_groupe_prive_index') }}">Retour à la liste</a>
+
+    <a class="uk-button uk-button-primary uk-border-rounded uk-margin" href="{{ path('app_groupe_prive_edit', {'id': groupe_prive.id}) }}">modifier</a>
+
+    {{ include('groupe_prive/_delete_form.html.twig') }}
+{% endblock %}

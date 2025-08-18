@@ -12,6 +12,7 @@
                     <li class="uk-active"><a href="{{ path('sortie_list') }}">Liste</a></li>
                     {% if app.user %}
                     <li class="uk-active uk-visible@m"><a href="{{ path('sortie_create') }}">Créer</a></li>
+                    <li class="uk-active uk-visible@m"><a href="{{ path('app_groupe_prive_index') }}">Groupe Prive</a></li>
                     {% endif %}
                      {% if is_granted('ROLE_ADMIN') %}
                         <li class="uk-active"><a href="{{ path('user_list') }}">Liste des utilisateurs</a></li>
