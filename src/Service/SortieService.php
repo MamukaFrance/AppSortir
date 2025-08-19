@@ -96,6 +96,26 @@ class SortieService
         $this->entityManager->flush();
     }
 
+    public function changeStatusEnCours($sortie)
+    {
+     $statusEnCours = $this->entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Activité en cours']);
+        if (!$statusEnCours) {
+            throw new \Exception("État non trouvé.");
+        }
+        $sortie->setIdEtat($statusEnCours);
+        $this->entityManager->flush();
+    }
+
+    public function changeStatusCloture($sortie)
+    {
+        $statusCloture = $this->entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Clôturé']);
+        if (!$statusCloture) {
+            throw new \Exception("État non trouvé.");
+        }
+        $sortie->setIdEtat($statusCloture);
+        $this->entityManager->flush();
+    }
+
 
 
 

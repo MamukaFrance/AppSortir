@@ -39,9 +39,9 @@
             {% if app.user%}
             <th>Action</th>
             {% endif %}
-            {% if is_granted('ROLE_ADMIN') %}
-                <th>Supprimer une sortie</th>
-            {% endif %}
+{#            {% if is_granted('ROLE_ADMIN') %}#}
+{#                <th>Supprimer une sortie</th>#}
+{#            {% endif %}#}
         </tr>
         </thead>
         <tbody>
@@ -105,12 +105,15 @@
                         and c.idEtat.libelle == 'Créée' ) %}
                         <a href="{{ path('sortie_publier', {'id': c.id}) }}">Publier</a>
                     {% endif %}
-                </td>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <td>
+                    {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
-                    </td>
-                {% endif %}
+                    {% endif %}
+                </td>
+{#                {% if is_granted('ROLE_ADMIN') %}#}
+{#                    <td>#}
+{#                        <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>#}
+{#                    </td>#}
+{#                {% endif %}#}
             </tr>
         {% else %}
             <tr>

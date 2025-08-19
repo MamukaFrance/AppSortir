@@ -92,5 +92,4 @@ class SortieRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
 }
