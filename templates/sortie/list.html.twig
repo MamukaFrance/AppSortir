@@ -37,7 +37,7 @@
             <th>Détail</th>
             {% endif %}
             {% if app.user%}
-            <th>Anuler</th>
+            <th>Action</th>
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Supprimer une sortie</th>
@@ -66,8 +66,19 @@
                 <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
                 {% if app.user %}
                 <td>
-                    {% if app.user.id != c.idOrganisateur.id %}
-                     <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                    {% set inscrit = false %}
+
+                    {% for p in c.ListParticipant %}
+                        {% if app.user.id == p.id %}
+                            {% set inscrit = true %}
+                        {% endif %}
+                    {% endfor %}
+                    {%  if c.idEtat == 'Ouvert' %}
+                        {% if inscrit %}
+                            <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
+                        {% else %}
+                            <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
@@ -89,6 +100,11 @@
                     %}
                         <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
                 {% endif %}
+                    {% if app.user is not null
+                        and (app.user.id == c.idOrganisateur.id
+                        and c.idEtat.libelle == 'Créée' ) %}
+                        <a href="{{ path('sortie_publier', {'id': c.id}) }}">Publier</a>
+                    {% endif %}
                 </td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>

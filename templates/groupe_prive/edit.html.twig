@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier groupe prive{% endblock %}
+
+{% block body %}
+    <h1>Modifier groupe prive</h1>
+
+    {{ include('groupe_prive/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+    <a class="uk-button uk-button-primary uk-border-rounded uk-margin" href="{{ path('app_groupe_prive_index') }}">Retour à la liste</a>
+
+    {{ include('groupe_prive/_delete_form.html.twig') }}
+{% endblock %}

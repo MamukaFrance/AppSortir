@@ -9,6 +9,9 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+#    App\Service\NominatimService:
+#        access_control:
+#            $httpClient: '@http_client'
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

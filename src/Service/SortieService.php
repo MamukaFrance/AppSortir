@@ -6,7 +6,6 @@ use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Repository\SortieRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SortieService
@@ -27,6 +26,7 @@ class SortieService
     // Inscrit un utilisateur à une sortie
     public function registerUserToSortie(Sortie $sortie, User $user): bool
     {
+
         if ($sortie->getListParticipant()->contains($user)) {
             return false;
         }
@@ -43,6 +43,17 @@ class SortieService
         return true;
     }
 
+    public function desinscrireDeSortie(Sortie $sortie, User $user): bool
+    {
+        if ($sortie->getListParticipant()->contains($user)) {
+            $sortie->removeListParticipant($user);
+            $this->entityManager->persist($sortie);
+            $this->entityManager->flush();
+            return true;
+        }
+        return false;
+    }
+
     public function mesSorties($userID)
     {
         return $this->sortieRepository->mesSorties($userID);
@@ -55,7 +66,7 @@ class SortieService
             throw new \Exception("Sortie avec l'id $id non trouvée.");
         }
 
-        // Récupérer l'entité Etat avec l'id 5
+        // Récupérer l'entité Etat avec l'id
         $etatAnnulee = $this->entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Annulée']);
         dump($etatAnnulee);
 
@@ -66,6 +77,22 @@ class SortieService
         // Utiliser le setter correspondant au champ
         $sortie->setIdEtat($etatAnnulee);
 
+        $this->entityManager->flush();
+    }
+
+    public function publier(int $id): void
+    {
+        $sortie = $this->sortieRepository->find($id);
+        if (!$sortie) {
+            throw new \Exception("Sortie avec l'id $id non trouvée.");
+        }
+        $etatPublier = $this->entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouvert']);
+
+        if (!$etatPublier) {
+            throw new \Exception("État avec l'id 5 non trouvé.");
+        }
+        // Utiliser le setter correspondant au champ
+        $sortie->setIdEtat($etatPublier);
         $this->entityManager->flush();
     }
 
