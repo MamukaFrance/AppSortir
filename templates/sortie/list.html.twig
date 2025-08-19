@@ -37,7 +37,7 @@
             <th>Détail</th>
             {% endif %}
             {% if app.user%}
-            <th>Anuler</th>
+            <th>Action</th>
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Supprimer une sortie</th>
@@ -100,6 +100,11 @@
                     %}
                         <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
                 {% endif %}
+                    {% if app.user is not null
+                        and (app.user.id == c.idOrganisateur.id
+                        and c.idEtat.libelle == 'Créée' ) %}
+                        <a href="">Publier</a>
+                    {% endif %}
                 </td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>
