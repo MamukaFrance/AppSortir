@@ -78,5 +78,19 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findStartingIn48Hours(): array
+    {
+        $now = new \DateTimeImmutable();
+        $limit = $now->modify('+48 hours');
+
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.dateHeureDebut BETWEEN :now AND :limit')
+            ->andWhere('s.rappelEnvoye = :sent')
+            ->setParameter('now', $now)
+            ->setParameter('limit', $limit)
+            ->setParameter('sent', false) // 0 en SQL
+            ->getQuery()
+            ->getResult();
+    }
 
 }
