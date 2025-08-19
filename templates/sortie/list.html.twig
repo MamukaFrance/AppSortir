@@ -103,7 +103,7 @@
                     {% if app.user is not null
                         and (app.user.id == c.idOrganisateur.id
                         and c.idEtat.libelle == 'Créée' ) %}
-                        <a href="">Publier</a>
+                        <a href="{{ path('sortie_publier', {'id': c.id}) }}">Publier</a>
                     {% endif %}
                 </td>
                 {% if is_granted('ROLE_ADMIN') %}

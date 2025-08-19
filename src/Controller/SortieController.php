@@ -184,12 +184,28 @@ final class SortieController extends AbstractController
         $sortie = $sortieRepository->find($id);
 
         if ($sortie->getDateHeureDebut() > new \DateTime()) {
+            $sortieService->annulee($id);
             $siteId = $request->query->getInt('site', 0);
             $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
             $sites = $siteRepo->findAll();
-            $sortieService->annulee($id);
+
 
         }
+
+        return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
+    }
+
+    #[Route('/publier/{id}', name: 'publier', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function publier(int $id, Request $request,SiteRepository $siteRepo, SortieService $sortieService, SortieRepository $sortieRepository): Response
+    {
+            $sortieService->publier($id);
+            $siteId = $request->query->getInt('site', 0);
+            $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
+            $sites = $siteRepo->findAll();
+
+
+
+
 
         return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
     }
