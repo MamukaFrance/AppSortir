@@ -34,8 +34,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\Column (options: ['default' => true])]
+    private array $roles = ['ROLE_USER'];
 
     /**
      * @var string The hashed password
@@ -79,12 +79,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $photo = null;
 
+    /**
+     * @var Collection<int, GroupePrive>
+     */
+    #[ORM\OneToMany(targetEntity: GroupePrive::class, mappedBy: 'createur')]
+    private Collection $groupePrives;
+
+    /**
+     * @var Collection<int, GroupePrive>
+     */
+    #[ORM\ManyToMany(targetEntity: GroupePrive::class, mappedBy: 'participants')]
+    private Collection $listeParticipantGroupePrive;
+
     public function __construct()
     {
         $this->administrateur = false;
         $this->actif = true;
         $this->ListOrganisateur = new ArrayCollection();
         $this->ListSortie = new ArrayCollection();
+        $this->groupePrives = new ArrayCollection();
+        $this->ListeParticipantGroupePrive = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -307,6 +321,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->photo = $photo;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupePrive>
+     */
+    public function getGroupePrives(): Collection
+    {
+        return $this->groupePrives;
+    }
+
+    public function addGroupePrife(GroupePrive $groupePrife): static
+    {
+        if (!$this->groupePrives->contains($groupePrife)) {
+            $this->groupePrives->add($groupePrife);
+            $groupePrife->setCreateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupePrife(GroupePrive $groupePrife): static
+    {
+        if ($this->groupePrives->removeElement($groupePrife)) {
+            // set the owning side to null (unless already changed)
+            if ($groupePrife->getCreateur() === $this) {
+                $groupePrife->setCreateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupePrive>
+     */
+    public function getListeParticipantGroupePrive(): Collection
+    {
+        return $this->ListeParticipantGroupePrive;
+    }
+
+    public function addListeParticipantGroupePrive(GroupePrive $listeParticipantGroupePrive): static
+    {
+        if (!$this->ListeParticipantGroupePrive->contains($listeParticipantGroupePrive)) {
+            $this->ListeParticipantGroupePrive->add($listeParticipantGroupePrive);
+            $listeParticipantGroupePrive->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListeParticipantGroupePrive(GroupePrive $listeParticipantGroupePrive): static
+    {
+//
+        if ($this->listeParticipantGroupePrive->removeElement($listeParticipantGroupePrive)) {
+            $listeParticipantGroupePrive->removeParticipant($this);
+        }
         return $this;
     }
 }

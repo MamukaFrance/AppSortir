@@ -27,6 +27,7 @@ class SortieService
     // Inscrit un utilisateur à une sortie
     public function registerUserToSortie(Sortie $sortie, User $user): bool
     {
+
         if ($sortie->getListParticipant()->contains($user)) {
             return false;
         }
@@ -41,6 +42,17 @@ class SortieService
         $this->entityManager->flush();
 
         return true;
+    }
+
+    public function desinscrireDeSortie(Sortie $sortie, User $user): bool
+    {
+        if ($sortie->getListParticipant()->contains($user)) {
+            $sortie->removeListParticipant($user);
+            $this->entityManager->persist($sortie);
+            $this->entityManager->flush();
+            return true;
+        }
+        return false;
     }
 
     public function mesSorties($userID)
