@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche coordonnées GPS{% endblock %}
+
+{% block body %}
+    <h1>Recherche coordonnées GPS</h1>
+    <input type="text" id="place-input" placeholder="Tapez un lieu..." />
+    <button id="search-btn">Rechercher</button>
+
+    <div id="result" style="margin-top: 1em; font-weight: bold;"></div>
+
+    <script>
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const place = document.getElementById('place-input').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!place) {
+                resultDiv.textContent = 'Veuillez entrer un lieu.';
+                return;
+            }
+
+            fetch(`/villes/ajouter?place=${encodeURIComponent(place)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Lieu non trouvé');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Données reçues :', data);  // Pour debug
+                    resultDiv.textContent = `Latitude : ${data.lat}, Longitude : ${data.lon}`;
+                })
+                .catch(err => {
+                    resultDiv.textContent = err.message;
+                });
+        });
+
+    </script>
+{% endblock %}
+
+
+
+
+
