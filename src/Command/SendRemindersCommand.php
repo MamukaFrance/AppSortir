@@ -28,50 +28,64 @@ class SendRemindersCommand extends Command
         parent::__construct();
     }
 
-    //Fonction appelé avec la commande de console créé au dessus
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        //renvoie la liste des sorties 48h avant la date de début,
-        // en filtrant les sorties où le rappel n'a pas été envoyé
         $sorties = $this->sortieRepo->findStartingIn48Hours();
+        $count = 0;
 
-        //pour chaque sortie filtré on envoie un mail aux participants et a l'organisateur
         foreach ($sorties as $sortie) {
+            // Envoi aux participants
             foreach ($sortie->getListParticipant() as $participant) {
-                $email = (new Email())
-                    ->from('no-reply@campus-eni.fr')
-                    ->to($participant->getEmail())
-                    ->subject('Rappel : ' . $sortie->getNom())
-                    ->text(sprintf(
-                        "Bonjour %s,\nVotre sortie « %s » est prévue le %s.",
-                        $participant->getNom(),
-                        $sortie->getNom(),
-                        $sortie->getDateHeureDebut()->format('d/m/Y H:i')
-                    ));
+                try {
+                    $email = (new Email())
+                        ->from('no-reply@campus-eni.fr')
+                        ->to($participant->getEmail())
+                        ->subject('Rappel : ' . $sortie->getNom())
+                        ->text(sprintf(
+                            "Bonjour %s,\nVotre sortie « %s » est prévue le %s.",
+                            $participant->getNom(),
+                            $sortie->getNom(),
+                            $sortie->getDateHeureDebut()->format('d/m/Y H:i')
+                        ));
 
-                $this->mailer->send($email);
+                    $this->mailer->send($email);
+                    $count++;
+                } catch (\Throwable $e) {
+                    $output->writeln('<error>Erreur envoi à '.$participant->getEmail().' : '.$e->getMessage().'</error>');
+                }
             }
-            $organisateur=$sortie->getIdOrganisateur();
-            $email=(new Email())
-                ->from('no-reply@campus-eni.fr')
-                ->to($organisateur->getEmail())
-                ->subject('Rappel : ' . $sortie->getNom())
-                ->text(sprintf( "Bonjour %s,\nVotre sortie « %s » est prévue le %s.",
-                    $organisateur->getNom(),
-                    $sortie->getNom(),
-                    $sortie->getDateHeureDebut()->format('d/m/Y H:i')));
-            $this->mailer->send($email);
 
-            //on change dans la table, le fait que le mail est envoyé
+            // Envoi à l’organisateur
+            $organisateur = $sortie->getIdOrganisateur();
+            if ($organisateur && $organisateur->getEmail()) {
+                try {
+                    $email = (new Email())
+                        ->from('no-reply@campus-eni.fr')
+                        ->to($organisateur->getEmail())
+                        ->subject('Rappel : ' . $sortie->getNom())
+                        ->text(sprintf(
+                            "Bonjour %s,\nVotre sortie « %s » est prévue le %s.",
+                            $organisateur->getNom(),
+                            $sortie->getNom(),
+                            $sortie->getDateHeureDebut()->format('d/m/Y H:i')
+                        ));
+
+                    $this->mailer->send($email);
+                    $count++;
+                } catch (\Throwable $e) {
+                    $output->writeln('<error>Erreur envoi à l’organisateur '.$organisateur->getEmail().' : '.$e->getMessage().'</error>');
+                }
+            }
+
+            // Marquer la sortie comme rappel envoyé
             $sortie->setRappelEnvoye(true);
-
         }
 
-        //on enregistre en BBD que le rappel est envoyé
         $this->em->flush();
 
-        $output->writeln('Rappels envoyés avec succès.');
+        $output->writeln(sprintf('<info>%d rappels envoyés avec succès.</info>', $count));
 
         return Command::SUCCESS;
     }
+
 }

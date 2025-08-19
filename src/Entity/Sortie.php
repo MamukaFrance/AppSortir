@@ -207,6 +207,19 @@ class Sortie
         return $this;
     }
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $rappelEnvoye = false;
+
+    public function isRappelEnvoye(): bool
+    {
+        return $this->rappelEnvoye;
+    }
+
+    public function setRappelEnvoye(bool $rappelEnvoye): self
+    {
+        $this->rappelEnvoye = $rappelEnvoye;
+        return $this;
+    }
 
 
 }
