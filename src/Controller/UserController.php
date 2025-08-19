@@ -37,45 +37,18 @@ final class UserController extends AbstractController
     }
 
     #[Route('/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, EntityManagerInterface $em): Response
+    public function edit(Request $request, UserService $userService): Response
     {
-        $user = $this->getUser();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        $profil = $userService->edit($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user->setNom($user->getNom());
-            $user->setPrenom($user->getPrenom());
-            $user->setEmail($user->getEmail());
-            $user->setTelephone($user->getTelephone());
-
-            // Photo de profil
-            $photoFile = $form->get('photo')->getData();
-            if ($photoFile) {
-                $extension = $photoFile->guessExtension();
-                $nouveauNom = $user->getId() . '.' . $extension;
-
-                try {
-                    $photoFile->move(
-                        $this->getParameter('photos_directory'),
-                        $nouveauNom
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('danger', 'Erreur lors de l\'upload de la photo.');
-                }
-                $user->setPhoto($nouveauNom);
-
-            }
-
-            $em->persist($user);
-            $em->flush();
-            $this->addFlash('success', 'Profil modifié avec succès');
-            return $this->redirectToRoute('user_view');
+        if (isset($profil ['form'])) {
+            return $this->render('/user/edit.html.twig', [
+                'userForm' => $profil['form']->createView(),
+            ]);
         }
 
-        return $this->render('/user/edit.html.twig', [
-            'userForm' => $form->createView(),
-        ]);
+        $this->addFlash('success', 'Profil mis à jour avec succès.');
+        return $this->redirectToRoute('user_view');
     }
 
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -98,10 +71,8 @@ final class UserController extends AbstractController
     #[Route('desactive/{id}', name: 'desactive', methods: ['GET'])]
     public function desactive(int $id, UserService $userService, EntityManagerInterface $em): Response
     {
-
             $userService->desactive($id);
             $em->flush();
             return $this->redirectToRoute('user_list');
-
     }
 }
