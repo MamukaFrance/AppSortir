@@ -31,7 +31,6 @@ final class SortieController extends AbstractController
                            EntityManagerInterface $entityManager,
                            SortieService $sortieService): Response
     {
-
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
@@ -39,8 +38,6 @@ final class SortieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $ville = $form->get('ville')->getData();
-
-
             $sortie->setIdOrganisateur($this->getUser());
             $sortie->setIdEtat($entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Créée']));
             $entityManager->persist($sortie);
@@ -55,15 +52,14 @@ final class SortieController extends AbstractController
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $form->createView(),
         ]);
-
     }
 
     #[Route('/lieux/by-ville/{id}', name: 'lieux_by_ville', methods: ['GET'])]
     public function getLieuxByVille(int $id, LieuRepository $lieuRepo): JsonResponse
     {
         $lieux = $lieuRepo->findBy(['idVille' => $id]);
-
         $data = [];
+
         foreach ($lieux as $lieu) {
             $data[] = [
                 'id' => $lieu->getId(),
@@ -83,7 +79,6 @@ final class SortieController extends AbstractController
     {
         $siteId = $request->query->getInt('site', 0);
         $sites = $siteRepo->findAll();
-
         $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
 
         return $this->render('sortie/list.html.twig', [
@@ -138,6 +133,7 @@ final class SortieController extends AbstractController
     {
         $user = $this->getUser();
         $success = $sortieService->desinscrireDeSortie($sortie, $user);
+
         if($success){
             $this->addFlash('success', 'Vous êtes désinscrit');
             $mailService->sendEmailDesInscription();
@@ -145,6 +141,7 @@ final class SortieController extends AbstractController
         }else{
             $this->addFlash('warning', 'Vous êtes déjà desinscrit !');
         }
+
         return $this->redirectToRoute('sortie_list', [
             'id' => $sortie->getId()
         ]);
@@ -168,11 +165,11 @@ final class SortieController extends AbstractController
         $this->addFlash('success', 'Sortie supprimée');
         return $this->redirectToRoute('sortie_list');
     }
+
     #[Route('/mes-sorties', name: 'mes-sorties', methods: ['GET'])]
     public function mesSorties(Request $request, SortieService $sortieService): Response
     {
         $userID = $this->getUser()->getId();
-
         $sorties = $sortieService->mesSorties($userID);
 
         return $this->render('/user/mes-sorties.html.twig', ['sorties' => $sorties]);
@@ -188,8 +185,6 @@ final class SortieController extends AbstractController
             $siteId = $request->query->getInt('site', 0);
             $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
             $sites = $siteRepo->findAll();
-
-
         }
 
         return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
@@ -198,16 +193,11 @@ final class SortieController extends AbstractController
     #[Route('/publier/{id}', name: 'publier', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function publier(int $id, Request $request,SiteRepository $siteRepo, SortieService $sortieService, SortieRepository $sortieRepository): Response
     {
-            $sortieService->publier($id);
-            $siteId = $request->query->getInt('site', 0);
-            $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
-            $sites = $siteRepo->findAll();
-
-
-
-
+        $sortieService->publier($id);
+        $siteId = $request->query->getInt('site', 0);
+        $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
+        $sites = $siteRepo->findAll();
 
         return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
     }
-
 }
