@@ -14,10 +14,30 @@ class LieuType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('rue')
-            ->add('latitude')
-            ->add('longitude')
+            ->add('nom', null, [
+                'attr' => [
+                    'readonly' => true,
+                    'placeholder' => 'Nom du lieu (modifiable àprès recherche)'
+                ],
+            ])
+            ->add('rue', null, [
+                'attr' => [
+                    'readonly' => true,
+                    'placeholder' => 'Adresse remplie automatiquement'
+                ]
+            ])
+            ->add('latitude', null, [
+                'attr' => [
+                    'readonly' => true,
+                    'placeholder' => 'Latitude remplie automatiquement'
+                ]
+            ])
+            ->add('longitude', null, [
+                'attr' => [
+                    'readonly' => true,
+                    'placeholder' => 'Longitude remplie automatiquement'
+                ]
+            ])
             //->add('idVille', EntityType::class, [
                // 'class' => Ville::class,
                // 'choice_label' => 'id',

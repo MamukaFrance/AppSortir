@@ -1,19 +1,99 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Lieu{% endblock %}
+{% block title %}Nouveau Lieu{% endblock %}
 
 {% block body %}
-    <h1>Ajouter un lieu</h1>
+    <h1>Ajouter un lieu dans {{ ville.nom ?? 'la ville' }}</h1>
 
-    {{ form_start(form) }}
-
-    {{ form_widget(form) }}
-
-    <button type="submit" class="btn btn-primary">Envoyer</button>
-
-    {{ form_end(form) }}
+    <label for="place-input">Rechercher un lieu</label>
+    <input type="text" id="place-input" placeholder="Tapez un lieu..." />
+    <div id="search-status" style="margin: 10px 0; font-style: italic; color: #666;"></div>
 
 
-    <a href="{{ path('lieux_list', {'villeId': ville.id}) }}">Retour à la liste</a>
+    {{ form_start(lieuForm) }}
+        {{ form_row(lieuForm.nom) }}
+        {{ form_row(lieuForm.rue) }}
+        {{ form_row(lieuForm.latitude) }}
+        {{ form_row(lieuForm.longitude) }}
+
+        <button type="submit" class="uk-button uk-button-primary uk-margin">Enregistrer</button>
+        <a href="{{ path('lieux_list', {'villeId': ville.id}) }}" class="uk-button uk-button-secondary uk-margin">Retour à la liste</a>
+    {{ form_end(lieuForm) }}
+
+    <script>
+        let searchTimeout;
+
+        document.getElementById('place-input').addEventListener('input', function() {
+            const place = this.value.trim();
+            const nomField = document.getElementById('lieu_nom')
+            const latitudeField = document.getElementById('lieu_latitude');
+            const longitudeField = document.getElementById('lieu_longitude');
+            const rueField = document.getElementById('lieu_rue');
+            const statusDiv = document.getElementById('search-status');
+
+            // Annuler la recherche précédente si elle existe
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+
+            if (!place) {
+                statusDiv.textContent = '';
+                return;
+            }
+
+            // Attendre 800ms après la dernière saisie avant de lancer la recherche
+            searchTimeout = setTimeout(() => {
+                statusDiv.textContent = '⏳ Recherche en cours...';
+                statusDiv.style.color = '#0066cc';
+
+                fetch(`/api/coordonnees?place=${encodeURIComponent(place)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Lieu non trouvé');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Données trouvées :', data);
+
+                        // Remplir automatiquement les champs
+                        nomField.value = data.nom;
+                        latitudeField.value = data.lat;
+                        longitudeField.value = data.lon;
+
+                        // Remplir le champ rue si une adresse est trouvée
+                        if (data.rue && data.rue.trim() !== '') {
+                            rueField.value = data.rue;
+                            statusDiv.textContent = `✓ Coordonnées et adresse trouvées : ${data.display_name || place}`;
+                        } else {
+                            statusDiv.textContent = `✓ Coordonnées trouvées : ${data.display_name || place} (pas d'adresse de rue disponible)`;
+                        }
+
+                        statusDiv.style.color = '#009900';
+
+                        // Effacer le message après 4 secondes
+                        setTimeout(() => {
+                            statusDiv.textContent = '';
+                        }, 4000);
+
+                        // Mettre le focus sur le champ nom pour permettre la modification
+                        nomField.focus();
+                        nomField.select();
+
+                    })
+                    .catch(err => {
+                        console.error('Erreur lors de la recherche :', err);
+                        statusDiv.textContent = `❌ ${err.message}`;
+                        statusDiv.style.color = '#cc0000';
+
+                        // Effacer les champs en cas d'erreur
+                        nomField.value = '';
+                        latitudeField.value = '';
+                        longitudeField.value = '';
+                        rueField.value = '';
+                    });
+            }, 800);
+        });
+    </script>
+
 {% endblock %}
-
