@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Event\SortieInscriptionEvent;
 use App\Form\SortieType;
+use App\Message\ChangeStatusMessage;
 use App\Repository\LieuRepository;
 use App\Repository\SiteRepository;
 use App\Repository\SortieRepository;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/sortie', name: 'sortie_')]
@@ -29,7 +32,8 @@ final class SortieController extends AbstractController
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request,
                            EntityManagerInterface $entityManager,
-                           SortieService $sortieService): Response
+                           SortieService $sortieService,
+                           MessageBusInterface $bus): Response
     {
 
         $sortie = new Sortie();
@@ -47,6 +51,23 @@ final class SortieController extends AbstractController
             $user =  $this->getUser();
             $sortieService->registerUserToSortie($sortie, $user);
             $entityManager->flush();
+
+            // 1️⃣ Passage à "Activité en cours" à la date de début
+            $now = new \DateTimeImmutable();
+            $delayToStart = max(0, ($sortie->getDateHeureDebut()->getTimestamp() - $now->getTimestamp()) * 1000);
+            $bus->dispatch(
+                new ChangeStatusMessage($sortie->getId(), "Activité en cours"),
+                [new DelayStamp($delayToStart)]
+            );
+
+            // 2️⃣ Passage à "Passée" après date début + durée
+            $dateFin = $sortie->getDateHeureDebut()->modify('+' . $sortie->getDuree() . ' minutes');
+            $delayToEnd = max(0, ($dateFin->getTimestamp() - $now->getTimestamp()) * 1000);
+            $bus->dispatch(
+                new ChangeStatusMessage($sortie->getId(), "Passée"),
+                [new DelayStamp($delayToEnd)]
+            );
+
 
             $this->addFlash('success', 'Sortie crée');
             return $this->redirectToRoute('sortie_list');

@@ -116,6 +116,16 @@ class SortieService
         $this->entityManager->flush();
     }
 
+    public function changeStatusPassee($sortie)
+    {
+        $statusPassee = $this->entityManager->getRepository(Etat::class)->findOneBy(['libelle' => 'Passée']);
+        if (!$statusPassee) {
+            throw new \Exception("État non trouvé.");
+        }
+        $sortie->setIdEtat($statusPassee);
+        $this->entityManager->flush();
+    }
+
 
 
 
