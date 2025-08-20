@@ -15,6 +15,7 @@ use App\Service\MailService;
 use App\Service\SortieService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/sortie', name: 'sortie_')]
 final class SortieController extends AbstractController
@@ -177,7 +179,7 @@ final class SortieController extends AbstractController
             'sortie' => $sortie, 'participants' => $participants
         ]);
     }
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
     public function delete(Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
@@ -197,16 +199,21 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/annuler/{id}', name: 'annuler', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function annuler(int $id, Request $request,SiteRepository $siteRepo, SortieService $sortieService, SortieRepository $sortieRepository): Response
+    public function annuler(int $id,
+                            Request $request,
+                            SiteRepository $siteRepo,
+                            SortieService $sortieService,
+                            SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
 
-        if ($sortie->getDateHeureDebut() > new \DateTime()) {
+        if ($sortie->getDateHeureDebut() > new \DateTime()
+            and $this->getUser()->getId() == $sortie->getIdOrganisateur()->getId()) {
             $sortieService->annulee($id);
-            $siteId = $request->query->getInt('site', 0);
-            $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
-            $sites = $siteRepo->findAll();
         }
+        $siteId = $request->query->getInt('site', 0);
+        $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
+        $sites = $siteRepo->findAll();
 
         return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
     }
@@ -214,7 +221,10 @@ final class SortieController extends AbstractController
     #[Route('/publier/{id}', name: 'publier', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function publier(int $id, Request $request,SiteRepository $siteRepo, SortieService $sortieService, SortieRepository $sortieRepository): Response
     {
+        $sortie = $sortieRepository->find($id);
+        if ($this->getUser()->getId() == $sortie->getIdOrganisateur()->getId()){
             $sortieService->publier($id);
+        }
             $siteId = $request->query->getInt('site', 0);
             $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
             $sites = $siteRepo->findAll();
