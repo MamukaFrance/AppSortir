@@ -7,12 +7,13 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SortieService
 {
     public function __construct(
-        private SortieRepository $sortieRepository,
-        private EntityManagerInterface $entityManager
+        private SortieRepository       $sortieRepository,
+        private EntityManagerInterface $entityManager, private readonly Security $security
     ) {}
 
     // Récupère la liste des sorties pour un site donné

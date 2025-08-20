@@ -104,7 +104,6 @@ final class SortieController extends AbstractController
     {
         $siteId = $request->query->getInt('site', 0);
         $sites = $siteRepo->findAll();
-
         $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
 
         return $this->render('sortie/list.html.twig', [
@@ -223,10 +222,6 @@ final class SortieController extends AbstractController
             $siteId = $request->query->getInt('site', 0);
             $sorties = $sortieService->list($siteId > 0 ? $siteId : null);
             $sites = $siteRepo->findAll();
-
-
-
-
 
         return $this->render('sortie/list.html.twig', ['sites' => $sites,'sorties' => $sorties]);
     }

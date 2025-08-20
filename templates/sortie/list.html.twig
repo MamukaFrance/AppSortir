@@ -39,13 +39,14 @@
             {% if app.user%}
             <th>Action</th>
             {% endif %}
-{#            {% if is_granted('ROLE_ADMIN') %}#}
-{#                <th>Supprimer une sortie</th>#}
-{#            {% endif %}#}
+
         </tr>
         </thead>
         <tbody>
         {% for c in sorties %}
+            {% if not ((c.idEtat.libelle == 'Créée' and c.idOrganisateur != app.user)
+                or (c.idEtat.libelle == 'Annulée' and c.idOrganisateur != app.user))
+            %}
             <tr>
                 <td>{{ c.nom }}</td>
                 <td>{{ c.infosSortie }}</td>
@@ -73,7 +74,7 @@
                             {% set inscrit = true %}
                         {% endif %}
                     {% endfor %}
-                    {%  if c.idEtat == 'Ouvert' %}
+                    {%  if c.idEtat.libelle == 'Ouvert' %}
                         {% if inscrit %}
                             <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
                         {% else %}
@@ -109,12 +110,8 @@
                         <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
                     {% endif %}
                 </td>
-{#                {% if is_granted('ROLE_ADMIN') %}#}
-{#                    <td>#}
-{#                        <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>#}
-{#                    </td>#}
-{#                {% endif %}#}
             </tr>
+            {% endif %}
         {% else %}
             <tr>
                 <td colspan="11" style="text-align:center;">Aucune sortie trouvée</td>
