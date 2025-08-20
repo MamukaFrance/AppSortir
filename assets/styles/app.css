@@ -5,7 +5,8 @@ body {
     background-color: skyblue;
 }
 
-/* Navbar */
+/* Navbar **
+***********/
 .logo {
     width: 64px;
 }
@@ -22,14 +23,19 @@ body {
     flex-direction: column;
 }
 
-/* Fin Navbar */
+/* Fin Navbar **
+***************/
+
 
 main {
     flex: 1;
     padding: 5px;
 }
 
-/* Profil */
+
+/* Profil **
+***********/
+
 .profil-haut {
     display: flex;
     align-items: stretch; /* important pour que les enfants prennent la même hauteur */
@@ -75,8 +81,26 @@ main {
     flex: 2; /* un peu plus de place que la photo */
 }
 
+/* Fin Profil **
+***************/
 
-/* Tableau */
+
+
+/* Formulaire Lieu **
+********************/
+.uk-form-icon-flip {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* Fin Formulaire Lieu **
+************************/
+
+
+
+/* Tableau **
+************/
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -103,9 +127,14 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #f1f1f1;
 }
-/* Fin Tableau */
 
-/* Liens */
+/* Fin Tableau **
+****************/
+
+
+/* Liens **
+**********/
+
 a {
     color: #007BFF;
     text-decoration: none;
@@ -115,12 +144,20 @@ a {
 a:hover {
     text-decoration: underline;
 }
-/* Fin Liens */
+
+/* Fin Liens **
+**************/
+
+/* Footer **
+***********/
 
 footer {
     background-color: #fff;
     height: 2em;
 }
+
+/* Fin Footer **
+***************/
 
 .imopcsv input{
     background-color: transparent;
