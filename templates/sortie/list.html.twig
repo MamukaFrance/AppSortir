@@ -44,9 +44,7 @@
         </thead>
         <tbody>
         {% for c in sorties %}
-            {% if not ((c.idEtat.libelle == 'Créée' and c.idOrganisateur != app.user)
-                or (c.idEtat.libelle == 'Annulée' and c.idOrganisateur != app.user))
-            %}
+            {% if is_granted('ROLE_ADMIN') or (c.idOrganisateur.id == app.user.id or c.idEtat.libelle == 'Ouvert') %}
             <tr>
                 <td>{{ c.nom }}</td>
                 <td>{{ c.infosSortie }}</td>
