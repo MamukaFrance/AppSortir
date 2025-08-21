@@ -39,7 +39,9 @@
             {% if app.user%}
             <th>Action</th>
             {% endif %}
-
+            {% if is_granted('ROLE_ADMIN') %}
+                <th>Supprimer une sortie</th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -48,69 +50,70 @@
                 or (app.user and c.idOrganisateur.id == app.user.id)
                 or c.idEtat.libelle == 'Ouvert' %}
                 <tr>
-                <td>{{ c.nom }}</td>
-                <td>{{ c.infosSortie }}</td>
-                <td>
-                    {{ c.dateHeureDebut ? c.dateHeureDebut|date('d/m/Y H:i') : 'Non définie' }}
-                </td>
-                <td>{{ c.duree ?? '-' }}</td>
-                <td>{{ c.nbInscriptionsMax ?? '-' }}</td>
-                <td>
-                    {{ c.dateLimiteInscription ? c.dateLimiteInscription|date('d/m/Y') : '-' }}
-                </td>
-                <td>{{ c.idSite ? c.idSite.nom : 'Aucun site' }}</td>
-                <td>
-                    {# Ajuste ici selon le nom de ta propriété dans User #}
-                    {{ c.idOrganisateur ? c.idOrganisateur.email : 'Aucun organisateur' }}
-                </td>
-                <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
-                <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
-                {% if app.user %}
-                <td>
-                    {% set inscrit = false %}
+                    <td>{{ c.nom }}</td>
+                    <td>{{ c.infosSortie }}</td>
+                    <td>
+                        {{ c.dateHeureDebut ? c.dateHeureDebut|date('d/m/Y H:i') : 'Non définie' }}
+                    </td>
+                    <td>{{ c.duree ?? '-' }}</td>
+                    <td>{{ c.nbInscriptionsMax ?? '-' }}</td>
+                    <td>
+                        {{ c.dateLimiteInscription ? c.dateLimiteInscription|date('d/m/Y') : '-' }}
+                    </td>
+                    <td>{{ c.idSite ? c.idSite.nom : 'Aucun site' }}</td>
+                    <td>
+                        {# Ajuste ici selon le nom de ta propriété dans User #}
+                        {{ c.idOrganisateur ? c.idOrganisateur.email : 'Aucun organisateur' }}
+                    </td>
+                    <td>{{ c.idEtat ? c.idEtat.libelle : 'Aucun état' }}</td>
+                    <td>{{ c.idLieu ? c.idLieu.nom : 'Aucun lieu' }}</td>
 
-                    {% for p in c.ListParticipant %}
-                        {% if app.user.id == p.id %}
-                            {% set inscrit = true %}
+                    {% if app.user %}
+                    <td>
+                        {% set inscrit = false %}
+
+                        {% for p in c.ListParticipant %}
+                            {% if app.user.id == p.id %}
+                                {% set inscrit = true %}
+                            {% endif %}
+                        {% endfor %}
+                        {%  if c.idEtat.libelle == 'Ouvert' %}
+                            {% if inscrit %}
+                                <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
+                            {% else %}
+                                <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                            {% endif %}
                         {% endif %}
-                    {% endfor %}
-                    {%  if c.idEtat.libelle == 'Ouvert' %}
-                        {% if inscrit %}
-                            <a href="{{ path('sortie_desinscrire', {'id': c.id}) }}">Se désinscrire</a>
-                        {% else %}
-                            <a href="{{ path('sortie_register', {'id': c.id}) }}">S'inscrire</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>
+                    </td>
+                    {% endif %}
+                    <td>
+                        {% if app.user is not null
+                            and (
+                            (app.user.id == c.idOrganisateur.id
+                            and c.idEtat is not null
+                            and c.idEtat.libelle != 'Annulée'
+                            and c.dateHeureDebut > date())
+                            or (is_granted('ROLE_ADMIN')
+                            and c.idEtat is not null
+                            and c.idEtat.libelle != 'Annulée'
+                            and c.dateHeureDebut > date())
+                            )
+                        %}
+                            <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
+                    {% endif %}
+                        {% if app.user is not null
+                            and (app.user.id == c.idOrganisateur.id
+                            and c.idEtat.libelle == 'Créée' ) %}
+                            <a href="{{ path('sortie_publier', {'id': c.id}) }}">Publier</a>
                         {% endif %}
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ path('sortie_show', {'id': c.id}) }}">Voir</a>
-                </td>
-                {% endif %}
-                <td>
-                    {% if app.user is not null
-                        and (
-                        (app.user.id == c.idOrganisateur.id
-                        and c.idEtat is not null
-                        and c.idEtat.libelle != 'Annulée'
-                        and c.dateHeureDebut > date())
-                        or (is_granted('ROLE_ADMIN')
-                        and c.idEtat is not null
-                        and c.idEtat.libelle != 'Annulée'
-                        and c.dateHeureDebut > date())
-                        )
-                    %}
-                        <a href="{{ path('sortie_annuler', {'id': c.id}) }}">Annuler</a>
-                {% endif %}
-                    {% if app.user is not null
-                        and (app.user.id == c.idOrganisateur.id
-                        and c.idEtat.libelle == 'Créée' ) %}
-                        <a href="{{ path('sortie_publier', {'id': c.id}) }}">Publier</a>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
-                    {% endif %}
-                </td>
-            </tr>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('sortie_delete', {'id': c.id}) }}">Supprimer</a>
+                        {% endif %}
+                    </td>
+                </tr>
             {% endif %}
         {% else %}
             <tr>
