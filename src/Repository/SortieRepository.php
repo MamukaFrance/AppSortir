@@ -49,6 +49,8 @@ class SortieRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->where('s.dateHeureDebut >= :dateLimite')
             ->setParameter('dateLimite', new \DateTimeImmutable('-1 month'))
+            ->andWhere('s.idEtat = :etat')
+            ->setParameter('etat', 1)
             ->andWhere('s.dateLimiteInscription >= :now')
             ->setParameter('now', new \DateTimeImmutable())
             ->orderBy('s.dateHeureDebut', 'ASC');

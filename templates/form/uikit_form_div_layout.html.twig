@@ -232,7 +232,7 @@
 {% set label = name|humanize %}
 {%- endif -%}
 {%- endif -%}
-<button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+<button type="{{ type|default('button') }} " {{ block('button_attributes') }}>
 {%- if translation_domain is same as(false) -%}
 {%- if label_html is same as(false) -%}
 {{- label -}}

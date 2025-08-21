@@ -1,43 +1,49 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('vendor/uikit/css/uikit.min.css') }}">
-        <link rel="icon" href="{{ asset('images/logo.png') }}">;
-        <link rel="stylesheet" href="{{ asset('vendor/uikit/css/uikit.min.css') }}">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('vendor/uikit/css/uikit.min.css') }}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 
-        {#  UIKIT JS #}
-        <script src="{{ asset('vendor/uikit/js/uikit.js') }}"></script>
-        <script src="{{ asset('vendor/uikit/js/uikit-icons.js') }}"></script>
-        {#  ./UIKIT JS #}
+    {% block stylesheets %}
+    {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        <header>
-            {% include '_navbar.html.twig' %}
-        </header>
-        <main class="contenu uk-container">
-            {#  Pour chaque type de message temporaire (ex: [success, [messages]] #}
-            {% for label, messages in app.flashes %}
-                {#  Pour chaque message j'affiche une alert. ex: [Virement effectué, Connecté] #}
-                {% for message in messages %}
-                    <div class="uk-alert-{{ label }}" uk-alert>
-                        <a href class="uk-alert-close" uk-close></a>
-                        <p>{{ message }}</p>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        {%  block body %}
-        {%  endblock %}
-        </main>
-        <footer>
-            <p class="uk-text-center text-body-secondary">@App-Sortir - {{ 'now' | date('Y') }}</p>
-        </footer>
-    </body>
+    {# UIKIT JS #}
+    <script src="{{ asset('vendor/uikit/js/uikit.js') }}"></script>
+    <script src="{{ asset('vendor/uikit/js/uikit-icons.js') }}"></script>
+    {# ./UIKIT JS #}
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+<header>
+    {% include '_navbar.html.twig' %}
+</header>
+
+<main class="contenu uk-container">
+    {# Pour chaque type de message temporaire #}
+    {% for label, messages in app.flashes %}
+        {# Pour chaque message j'affiche une alert #}
+        {% for message in messages %}
+            <div class="uk-alert-{{ label }}" uk-alert>
+                <a href class="uk-alert-close" uk-close></a>
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}
+    {% endblock %}
+</main>
+
+<footer class="main-footer">
+    <div class="uk-container">
+        <p class="uk-text-center">@App-Sortir - {{ 'now' | date('Y') }}</p>
+    </div>
+</footer>
+</body>
 </html>
