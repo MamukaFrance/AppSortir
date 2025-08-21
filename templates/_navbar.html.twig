@@ -10,31 +10,21 @@
                 <li class="uk-active"><a href="{{ path('sortie_list') }}">Liste</a></li>
                 {% if app.user %}
                     <li class="uk-active"><a href="{{ path('sortie_create') }}">Créer</a></li>
-                    <li class="uk-active"><a href="{{ path('app_groupe_prive_index') }}">Groupe Privé</a></li>
+                    <li class="uk-active"><a href="{{ path('app_groupe_prive_index') }}">Groupes Privés</a></li>
                     <li class="uk-active"><a href="{{ path('villes_list') }}">Gérer les Villes et Lieux</a></li>
-                {% endif %}
-                <li class="uk-active"><a href="#">À propos</a></li>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="uk-active"><a href="{{ path('user_list') }}">Liste des utilisateurs</a></li>
-                    <li class="uk-active"><a href="{{ path('admin_userImport') }}">CSV</a></li>
-                    <li><a href="{{ path('app_register') }}" class="uk-active">S'enregistrer</a></li>
                 {% endif %}
             </ul>
         </div>
 
         <div class="uk-navbar-right uk-flex uk-flex-middle uk-gap-small">
             {% if app.user %}
-                <div class="user-info">
+                <div class="user-info" uk-toggle="target: #offcanvas-user-desktop">
                     <span class="greeting">Bonjour {{ app.user.prenom }}</span>
                     {% if app.user.photo %}
                         <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="navbar_photo_profil uk-border-circle">
                     {% else %}
                         <img src="{{ asset('images/profil_defaut.png') }}" alt="Photo de profil" class="navbar_photo_profil uk-border-circle">
                     {% endif %}
-                </div>
-                <div class="navbar_droite">
-                    <a href="{{ path('user_view') }}" class="uk-button uk-button-text">Mon profil</a>
-                    <a href="{{ path('app_logout') }}" class="uk-button uk-button-text logout-btn">Se déconnecter</a>
                 </div>
             {% else %}
                 <a href="{{ path('app_login') }}" class="uk-button uk-button-primary">Se connecter</a>
@@ -86,16 +76,15 @@
                 <li><a href="{{ path('sortie_list') }}"><span uk-icon="list"></span> Liste des sorties</a></li>
                 {% if app.user %}
                     <li><a href="{{ path('sortie_create') }}"><span uk-icon="plus-circle"></span> Créer une sortie</a></li>
-                    <li><a href="{{ path('app_groupe_prive_index') }}"><span uk-icon="users"></span> Groupe Privé</a></li>
+                    <li><a href="{{ path('app_groupe_prive_index') }}"><span uk-icon="users"></span> Groupes Privés</a></li>
                     <li><a href="{{ path('villes_list') }}"><span uk-icon="location"></span> Gérer les Villes et Lieux</a></li>
                 {% endif %}
-                <li><a href="#"><span uk-icon="info"></span> À propos</a></li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="uk-nav-divider"></li>
                     <li class="uk-nav-header">Administration</li>
                     <li><a href="{{ path('user_list') }}"><span uk-icon="users"></span> Liste des utilisateurs</a></li>
                     <li><a href="{{ path('admin_userImport') }}"><span uk-icon="upload"></span> Import CSV</a></li>
-                    <li><a href="{{ path('app_register') }}"><span uk-icon="user-plus"></span> S'enregistrer</a></li>
+                    <li><a href="{{ path('app_register') }}"><span uk-icon="user-plus"></span> Enregistrer un utilisateur</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -107,7 +96,7 @@
     <div id="offcanvas-profile" uk-offcanvas="overlay: true; mode: slide; flip: true">
         <div class="uk-offcanvas-bar">
             <div class="uk-offcanvas-header">
-                <h3 class="uk-offcanvas-title">Profil</h3>
+                <h3 class="uk-offcanvas-title">Menu utilisateur</h3>
                 <button class="uk-offcanvas-close" type="button" uk-close></button>
             </div>
 
@@ -125,6 +114,44 @@
                     <li><a href="{{ path('user_view') }}"><span uk-icon="user"></span> Mon profil</a></li>
                     <li><a href="{{ path('app_logout') }}"><span uk-icon="sign-out"></span> Se déconnecter</a></li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    {# Off-canvas User Desktop #}
+    <div id="offcanvas-user-desktop" uk-offcanvas="overlay: true; mode: slide; flip: true">
+        <div class="uk-offcanvas-bar">
+            <div class="uk-offcanvas-header">
+                <h3 class="uk-offcanvas-title">Menu utilisateur</h3>
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+            </div>
+
+            <div class="uk-margin">
+                <div class="uk-text-center uk-margin-bottom">
+                    {% if app.user.photo %}
+                        <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="uk-border-circle" width="80" height="80">
+                    {% else %}
+                        <img src="{{ asset('images/profil_defaut.png') }}" alt="Photo de profil" class="uk-border-circle" width="80" height="80">
+                    {% endif %}
+                    <h4 class="uk-margin-small-top">{{ app.user.prenom }} {{ app.user.nom }}</h4>
+                </div>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <ul class="uk-nav uk-nav-secondary">
+                        <li class="uk-active"><a href="{{ path('user_list') }}"><span uk-icon="users"></span> Liste des utilisateurs</a></li>
+                        <li><a href="{{ path('app_register') }}" class="uk-active"><span uk-icon="user"></span> Enregistrer un utilisateur</a></li>
+                        <li class="uk-active"><a href="{{ path('admin_userImport') }}"><span uk-icon="list"></span> CSV</a></li>
+                    </ul>
+                {% endif %}
+
+                <hr class="uk-divider-small">
+
+                <ul class="uk-nav uk-nav-primary">
+                    <li><a href="{{ path('user_view') }}"><span uk-icon="user"></span> Mon profil</a></li>
+                    <li><a href="{{ path('app_logout') }}"><span uk-icon="sign-out"></span> Se déconnecter</a></li>
+                </ul>
+
+
             </div>
         </div>
     </div>

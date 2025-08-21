@@ -106,30 +106,19 @@ class LieuController extends AbstractController
             $nomAffiche = $coordonnees['display_name'];
             $part = explode(',', $nomAffiche);
             $nom = trim($part[0]);
-
         }
 
-        // Construire l'adresse de rue à partir des données Nominatim
         $rue = '';
         if (isset($coordonnees['address']) && is_array($coordonnees['address'])) {
             $address = $coordonnees['address'];
             $rueComponents = [];
 
-            // Récupérer les composants d'adresse dans l'ordre de priorité
             if (isset($address['house_number'])) {
                 $rueComponents[] = $address['house_number'];
             }
             if (isset($address['road'])) {
                 $rueComponents[] = $address['road'];
             }
-//            elseif (isset($address['street'])) {
-//                $rueComponents[] = $address['street'];
-//            } elseif (isset($address['pedestrian'])) {
-//                $rueComponents[] = $address['pedestrian'];
-//            } elseif (isset($address['path'])) {
-//                $rueComponents[] = $address['path'];
-//            }
-
             $rue = implode(' ', $rueComponents);
         }
 

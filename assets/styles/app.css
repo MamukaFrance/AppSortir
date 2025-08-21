@@ -203,6 +203,7 @@ body::before {
     border: 1px solid rgba(216, 101, 83, 0.2);
     box-shadow: var(--shadow-soft);
     transition: var(--transition-smooth);
+    cursor: pointer;
 }
 
 .user-info:hover {
@@ -525,7 +526,6 @@ main {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: var(--transition-smooth);
-    padding: 12px 16px;
     font-size: 14px;
 }
 

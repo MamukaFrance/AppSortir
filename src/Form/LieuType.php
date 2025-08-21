@@ -16,8 +16,8 @@ class LieuType extends AbstractType
         $builder
             ->add('nom', null, [
                 'attr' => [
-                    'readonly' => true,
-                    'placeholder' => 'Nom du lieu (modifiable àprès recherche)'
+                    'readonly' => false,
+                    'placeholder' => 'Nom du lieu (modifiable après recherche)'
                 ],
             ])
             ->add('rue', null, [
@@ -38,10 +38,6 @@ class LieuType extends AbstractType
                     'placeholder' => 'Longitude remplie automatiquement'
                 ]
             ])
-            //->add('idVille', EntityType::class, [
-               // 'class' => Ville::class,
-               // 'choice_label' => 'id',
-           // ])
         ;
     }
 

@@ -44,8 +44,10 @@
         </thead>
         <tbody>
         {% for c in sorties %}
-            {% if is_granted('ROLE_ADMIN') or (c.idOrganisateur.id == app.user.id or c.idEtat.libelle == 'Ouvert') %}
-            <tr>
+            {% if is_granted('ROLE_ADMIN')
+                or (app.user and c.idOrganisateur.id == app.user.id)
+                or c.idEtat.libelle == 'Ouvert' %}
+                <tr>
                 <td>{{ c.nom }}</td>
                 <td>{{ c.infosSortie }}</td>
                 <td>
