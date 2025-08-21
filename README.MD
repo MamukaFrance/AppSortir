@@ -72,4 +72,4 @@ Assurez-vous que les permissions des répertoires `var/` et `public/` soient cor
 
 ---
 
-👥 Projet réalisé dans le cadre d’un travail de groupe à l’**ENI**.
+👥 Projet réalisé dans le cadre d’un travail de groupe à l’**ENI** - 2025.
